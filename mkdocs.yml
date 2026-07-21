@@ -1,0 +1,67 @@
+site_name: The Farmer Was Replaced — Lab
+site_description: Unofficial study lab for The Farmer Was Replaced — mechanics, guides, tutorials and an annotated code collection.
+site_url: https://lucascerattors.github.io/the-farmer-was-replaced-lab/
+repo_url: https://github.com/LucasCerattoRS/the-farmer-was-replaced-lab
+repo_name: LucasCerattoRS/the-farmer-was-replaced-lab
+
+theme:
+  name: material
+  features:
+    - navigation.tabs
+    - navigation.top
+    - content.code.copy
+    - search.suggest
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: green
+      toggle:
+        icon: material/weather-night
+        name: Dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: green
+      toggle:
+        icon: material/weather-sunny
+        name: Light mode
+
+markdown_extensions:
+  - admonition
+  - tables
+  - pymdownx.superfences
+  - pymdownx.highlight
+  - toc:
+      permalink: true
+
+plugins:
+  - search
+  - i18n:
+      docs_structure: folder
+      fallback_to_default: true
+      languages:
+        - locale: en
+          name: English
+          default: true
+          build: true
+
+nav:
+  - Home: index.md
+  - Getting Started: getting-started.md
+  - Mechanics:
+      - Crops & Economy: mechanics/crops.md
+      - Drones & Multi-Drone: mechanics/drones.md
+      - Polyculture: mechanics/polyculture.md
+      - Cactus Sorting: mechanics/cactus-sorting.md
+      - Mazes & Gold: mechanics/mazes.md
+      - Dinosaurs & Bones: mechanics/dinosaurs.md
+      - Leaderboards: mechanics/leaderboards.md
+      - Simulation: mechanics/simulation.md
+  - Guides:
+      - Progression (early → end): guides/progression.md
+      - Leaderboard Strategies: guides/leaderboard-strategies.md
+  - Tutorials:
+      - Overview: tutorials/index.md
+      - "01 · Multi-Drone Farming": tutorials/01-multi-drone.md
+      - "02 · Cactus Sorting": tutorials/02-cactus-sorting.md
+      - "03 · Maze Gold Farming": tutorials/03-maze-gold.md
+  - API Reference: api/reference.md

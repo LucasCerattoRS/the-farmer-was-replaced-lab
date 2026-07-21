@@ -1,0 +1,12 @@
+# MkDocs build output
+site/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# OS / editor
+Thumbs.db
+.DS_Store
+.vscode/

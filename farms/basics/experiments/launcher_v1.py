@@ -1,0 +1,1 @@
+leaderboard_run(Leaderboards.Fastest_Reset, "NAME_OF_THE_WINDOW_WITH_THE_ABOVE_SCRIPT", 1000)
