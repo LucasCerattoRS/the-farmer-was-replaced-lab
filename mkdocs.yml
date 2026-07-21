@@ -64,6 +64,7 @@ plugins:
             Dinosaurs & Bones: Dinossauros & Ossos
             Leaderboards: Leaderboards
             Simulation: Simulação
+            Language Quirks & Gotchas: Peculiaridades da Linguagem
             Guides: Guias
             Progression (early → end): Progressão (início → fim)
             Leaderboard Strategies: Estratégias de Leaderboard
@@ -72,6 +73,9 @@ plugins:
             "01 · Multi-Drone Farming": "01 · Farming Multi-Drone"
             "02 · Cactus Sorting": "02 · Ordenação de Cactos"
             "03 · Maze Gold Farming": "03 · Ouro em Labirintos"
+            "04 · Dinosaur Apple Solver": "04 · Solver da Maçã do Dinossauro"
+            "05 · Polyculture Optimization": "05 · Otimização de Policultura"
+            "06 · Seed Hunting": "06 · Caça a Seeds"
             API Reference: Referência da API
 
 nav:
@@ -86,6 +90,7 @@ nav:
       - Dinosaurs & Bones: mechanics/dinosaurs.md
       - Leaderboards: mechanics/leaderboards.md
       - Simulation: mechanics/simulation.md
+      - Language Quirks & Gotchas: mechanics/language-quirks.md
   - Guides:
       - Progression (early → end): guides/progression.md
       - Leaderboard Strategies: guides/leaderboard-strategies.md
@@ -94,4 +99,7 @@ nav:
       - "01 · Multi-Drone Farming": tutorials/01-multi-drone.md
       - "02 · Cactus Sorting": tutorials/02-cactus-sorting.md
       - "03 · Maze Gold Farming": tutorials/03-maze-gold.md
+      - "04 · Dinosaur Apple Solver": tutorials/04-dinosaur-apple.md
+      - "05 · Polyculture Optimization": tutorials/05-polyculture.md
+      - "06 · Seed Hunting": tutorials/06-seed-hunting.md
   - API Reference: api/reference.md

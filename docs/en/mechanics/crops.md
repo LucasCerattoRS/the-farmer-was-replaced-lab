@@ -31,6 +31,8 @@ The catch: **about 1 in 5 pumpkins dies** on growing up, leaving a `Dead_Pumpkin
 !!! tip "Sizing the harvest"
     `pumpkin_megafarm.py` caps its target at 1,000,000 pumpkins (`ALVO_COLHEITA`) as a conservative trigger rather than waiting for a theoretical full-field fusion — a smaller, reliable harvest beats a giant one that occasionally misfires.
 
+A third variant, `pumpkin_megafarm_v3.py`, is worth reading for contrast: it drops the boss drone entirely and joins its workers with `wait_for()` instead of a busy-wait loop, detecting fusion by comparing two `measure()` readings in `check_pumpkin()`. Sixty-one lines against the original's one hundred and sixty-four.
+
 ## Sunflowers, Power & petals
 
 Sunflowers convert into `Items.Power` on harvest — the resource the drone burns automatically for its speed doubling. Each sunflower also has a **petal count**; `measure()` on a sunflower returns it. If you harvest a sunflower **at the maximum petal count, and at least 10 sunflowers exist**, you get a **5× bonus** on that harvest.

@@ -93,6 +93,18 @@ gigante: o `gold_25drones.py` roda 25 drones numa grade 5×5 de canteiros em vez
 num labirinto 32×32, e o `maze_gold_16drones_bfs.py` ladrilha 16 labirintos 8×8 separados em
 vez de um 32×32.
 
+## Outros scripts de labirinto neste repo
+
+- `gold_25drones_alt.py` — uma variante da farm de re-roll com 25 drones, com limiar de re-roll
+  diferente; compare com o `gold_25drones.py` pra ver o quanto a taxa de ouro é sensível a essa
+  única constante.
+- `maze_5x5_25drones.py` — a versão mínima: 25 drones estáticos numa grade 5×5, cada um
+  resolvendo o próprio canteiro sem estado compartilhado nenhum. O mais fácil de ler entre os
+  scripts de labirinto.
+- `treasure_hunt_8drones_buy.py` — um wall-follower que **compra os próprios insumos**, chamando
+  `get_cost()` e cultivando a Weird Substance de que precisa em vez de assumir um inventário
+  abastecido. Útil se você quer uma farm de labirinto que rode sozinha.
+
 Veja também: [Simulação](simulation.md) para ensaiar a contagem de re-rolls/taxa de ouro de uma
 estratégia antes de rodar pra valer, e [Leaderboards](leaderboards.md) para as metas exatas de
 `Maze` / `Maze_Single`.

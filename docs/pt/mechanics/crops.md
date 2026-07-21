@@ -31,6 +31,8 @@ O porém: **cerca de 1 em cada 5 abóboras morre** ao crescer, deixando uma `Dea
 !!! tip "Dimensionando a colheita"
     O `pumpkin_megafarm.py` limita a meta em 1.000.000 de abóboras (`ALVO_COLHEITA`) como gatilho conservador, em vez de esperar uma fusão teórica do campo inteiro — uma colheita menor e confiável ganha de uma gigante que às vezes falha.
 
+Uma terceira variante, `pumpkin_megafarm_v3.py`, vale a leitura por contraste: ela abandona o drone-chefe de vez e junta os workers com `wait_for()` em vez de busy-wait, detectando a fusão ao comparar duas leituras de `measure()` em `check_pumpkin()`. Sessenta e uma linhas contra as cento e sessenta e quatro da original.
+
 ## Girassóis, Power & pétalas
 
 Girassóis viram `Items.Power` ao serem colhidos — o recurso que o drone queima automaticamente pra dobrar a própria velocidade. Cada girassol também tem uma **contagem de pétalas**; `measure()` num girassol devolve isso. Se você colher um girassol **no máximo de pétalas, e existirem pelo menos 10 girassóis**, você ganha um **bônus de 5×** naquela colheita.

@@ -92,6 +92,17 @@ many small, fast-clearing mazes over one giant maze: `gold_25drones.py` runs 25 
 5×5 grid of maze plots rather than 1 drone on a 32×32 maze, and
 `maze_gold_16drones_bfs.py` tiles 16 separate 8×8 mazes rather than one 32×32 maze.
 
+## Other maze scripts in this repo
+
+- `gold_25drones_alt.py` — a variant of the 25-drone re-roll farm with a different re-roll
+  threshold; diff it against `gold_25drones.py` to see how sensitive the gold rate is to that
+  one constant.
+- `maze_5x5_25drones.py` — the minimal version: 25 static drones on a 5×5 grid, each one
+  solving its own plot with no shared state at all. The easiest of the maze scripts to read.
+- `treasure_hunt_8drones_buy.py` — a wall-follower that **buys its own supplies**, calling
+  `get_cost()` and farming the Weird Substance it needs instead of assuming a stocked
+  inventory. Useful if you want a maze farm that runs unattended.
+
 See also: [Simulation](simulation.md) for rehearsing a maze strategy's re-roll count/gold
 rate before running it live, and [Leaderboards](leaderboards.md) for the exact `Maze` /
 `Maze_Single` goals.
