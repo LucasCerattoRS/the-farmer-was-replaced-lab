@@ -71,6 +71,7 @@ plugins:
             Dinosaurs & Bones: Dinossauros & Ossos
             Leaderboards: Leaderboards
             Simulation: Simulação
+            Measured Numbers: Números Medidos
             Language Quirks & Gotchas: Peculiaridades da Linguagem
             Guides: Guias
             Progression (early → end): Progressão (início → fim)
@@ -84,6 +85,8 @@ plugins:
             "05 · Polyculture Optimization": "05 · Otimização de Policultura"
             "06 · Seed Hunting": "06 · Caça a Seeds"
             API Reference: Referência da API
+            About: Sobre
+            About the Game: Sobre o Jogo
 
 nav:
   - Home: index.md
@@ -104,6 +107,7 @@ nav:
       - Dinosaurs & Bones: mechanics/dinosaurs.md
       - Leaderboards: mechanics/leaderboards.md
       - Simulation: mechanics/simulation.md
+      - Measured Numbers: mechanics/measured-numbers.md
       - Language Quirks & Gotchas: mechanics/language-quirks.md
   - Guides:
       - Progression (early → end): guides/progression.md
@@ -117,3 +121,5 @@ nav:
       - "05 · Polyculture Optimization": tutorials/05-polyculture.md
       - "06 · Seed Hunting": tutorials/06-seed-hunting.md
   - API Reference: api/reference.md
+  - About:
+      - About the Game: about/the-game.md
