@@ -58,9 +58,10 @@ drone's sweep reaches that tile next.
 last two columns for Power income alongside the carrot polyculture.
 
 `farms/crops/hay_polyculture.py` and `weird_substance_polyculture.py` apply the identical
-mapping pattern to grass and a checkerboard of trees respectively — trees specifically
-benefit from *not* being adjacent to each other (see [Crops & Economy](crops.md)), so
-their companion tiles double as spacers.
+mapping pattern to different ends: the first keeps a grass field fed with carrot companions
+for hay, the second plants whatever `get_companion()` asks for — grass, bush, tree or carrot —
+and harvests the Weird Substance that results, which is the input mazes run on
+(see [Mazes & Gold](mazes.md#growing-a-maze)).
 
 ## Yields
 

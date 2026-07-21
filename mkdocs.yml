@@ -25,6 +25,11 @@ theme:
         icon: material/weather-sunny
         name: Light mode
 
+validation:
+  links:
+    not_found: warn
+    anchors: warn
+
 markdown_extensions:
   - admonition
   - tables
@@ -43,6 +48,31 @@ plugins:
           name: English
           default: true
           build: true
+        - locale: pt
+          name: Português (Brasil)
+          build: true
+          site_description: Laboratório de estudo não-oficial de The Farmer Was Replaced — mecânicas, guias, tutoriais e uma coleção de código anotada.
+          nav_translations:
+            Home: Início
+            Getting Started: Primeiros Passos
+            Mechanics: Mecânicas
+            Crops & Economy: Culturas & Economia
+            Drones & Multi-Drone: Drones & Multi-Drone
+            Polyculture: Policultura
+            Cactus Sorting: Ordenação de Cactos
+            Mazes & Gold: Labirintos & Ouro
+            Dinosaurs & Bones: Dinossauros & Ossos
+            Leaderboards: Leaderboards
+            Simulation: Simulação
+            Guides: Guias
+            Progression (early → end): Progressão (início → fim)
+            Leaderboard Strategies: Estratégias de Leaderboard
+            Tutorials: Tutoriais
+            Overview: Visão geral
+            "01 · Multi-Drone Farming": "01 · Farming Multi-Drone"
+            "02 · Cactus Sorting": "02 · Ordenação de Cactos"
+            "03 · Maze Gold Farming": "03 · Ouro em Labirintos"
+            API Reference: Referência da API
 
 nav:
   - Home: index.md
