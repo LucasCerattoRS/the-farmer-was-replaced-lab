@@ -6,6 +6,11 @@ item on this page is demonstrated by a real file in
 most of them only a few lines long. They are deliberately tiny: each one exists to prove
 exactly one thing about the runtime.
 
+> Looking for the systematic account rather than the surprises? The
+> [Language](../language/values-and-variables.md) section is the reference — types, operators,
+> control flow, functions, collections, and the full [import story](../language/modules-and-imports.md).
+> This page keeps only the *surprising subset* and links back into it.
+
 ## Modules are files, and files are windows
 
 Your code lives in **windows**, and a window's name *is* its module name. There is no

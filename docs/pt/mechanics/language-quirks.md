@@ -6,6 +6,11 @@ comportar. Todo item desta página é demonstrado por um arquivo real em
 a maioria com só algumas linhas. Eles são propositalmente minúsculos: cada um existe pra
 provar exatamente uma coisa sobre o runtime.
 
+> Procurando o relato sistemático em vez das surpresas? A seção
+> [Linguagem](../language/values-and-variables.md) é a referência — tipos, operadores, controle
+> de fluxo, funções, coleções, e a [história completa dos imports](../language/modules-and-imports.md).
+> Esta página guarda só o *subconjunto surpreendente* e aponta de volta pra ela.
+
 ## Módulos são arquivos, e arquivos são janelas
 
 Seu código mora em **janelas**, e o nome de uma janela *é* o nome do módulo dela. Não existe

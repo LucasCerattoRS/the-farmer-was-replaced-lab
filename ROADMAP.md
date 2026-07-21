@@ -68,16 +68,16 @@ about implementation.
 New section, derived from the official `scripting/` docs (766 lines) plus what the scripts in
 `farms/` actually demonstrate. The site currently has no systematic language coverage at all.
 
-- [ ] `language/values-and-variables.md` — types, assignment, truthiness (`variables.md`)
-- [ ] `language/operators.md` — arithmetic, comparison, logic, precedence (`operators.md`, 75 lines)
-- [ ] `language/control-flow.md` — `if` / `while` / `for` / `break` / `continue`
-- [ ] `language/functions-and-scope.md` — `def`, arguments, `global`, closures. Merge
+- [x] `language/values-and-variables.md` — types, assignment, truthiness (`variables.md`)
+- [x] `language/operators.md` — arithmetic, comparison, logic, precedence (`operators.md`, 75 lines)
+- [x] `language/control-flow.md` — `if` / `while` / `for` / `break` / `continue`
+- [x] `language/functions-and-scope.md` — `def`, arguments, `global`, closures. Merge
       `functions.md` (90 lines) + `scopes.md` (60 lines); this is where the closure-factory
       pattern finally has a proper home
-- [ ] `language/collections.md` — lists, dicts, sets, tuples, and which operations exist
-- [ ] `language/modules-and-imports.md` — the corrected import story, module caching, side
+- [x] `language/collections.md` — lists, dicts, sets, tuples, and which operations exist
+- [x] `language/modules-and-imports.md` — the corrected import story, module caching, side
       effects, `__name__`, cycles. Supersedes the quirks-page section
-- [ ] Wire into nav (EN + PT `nav_translations`), and point `language-quirks.md` at it —
+- [x] Wire into nav (EN + PT `nav_translations`), and point `language-quirks.md` at it —
       quirks stays as the *surprising* subset, not the reference
 
 ## Track 2 — Empirical research (measure the game)
@@ -125,3 +125,6 @@ of the same subject matter.
 - Site published, bilingual EN + pt-BR, 42 pages, CI green with `--strict` + anchor validation
 - 42 curated scripts, all referenced from the docs
 - Root README (EN + pt-BR), 6 tutorials, language-quirks page
+- **Track 1 — Language reference:** 6 new pages (values & variables, operators, control flow,
+  functions & scope, collections, modules & imports), EN + pt-BR, wired into nav under a new
+  *Language* section; quirks page repointed at it as the surprising subset. Build green.

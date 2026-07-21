@@ -55,6 +55,13 @@ plugins:
           nav_translations:
             Home: Início
             Getting Started: Primeiros Passos
+            Language: Linguagem
+            Values & Variables: Valores & Variáveis
+            Operators: Operadores
+            Control Flow: Controle de Fluxo
+            Functions & Scope: Funções & Escopo
+            Collections: Coleções
+            Modules & Imports: Módulos & Imports
             Mechanics: Mecânicas
             Crops & Economy: Culturas & Economia
             Drones & Multi-Drone: Drones & Multi-Drone
@@ -81,6 +88,13 @@ plugins:
 nav:
   - Home: index.md
   - Getting Started: getting-started.md
+  - Language:
+      - Values & Variables: language/values-and-variables.md
+      - Operators: language/operators.md
+      - Control Flow: language/control-flow.md
+      - Functions & Scope: language/functions-and-scope.md
+      - Collections: language/collections.md
+      - Modules & Imports: language/modules-and-imports.md
   - Mechanics:
       - Crops & Economy: mechanics/crops.md
       - Drones & Multi-Drone: mechanics/drones.md
