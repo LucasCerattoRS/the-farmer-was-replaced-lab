@@ -162,8 +162,8 @@ for i in range(1, 8):
     spawn_drone(criar_runner(c))
 ```
 
-Funções passadas pro `spawn_drone` não recebem argumentos, então `criar_runner(col)` constrói
-uma closure de zero argumentos que já sabe a própria coluna. Esse padrão aparece por todo o
+Os scripts deste repo não passam argumentos pra uma task de drone, então `criar_runner(col)`
+constrói uma closure de zero argumentos que já sabe a própria coluna. Esse padrão aparece por todo o
 repo — a demonstração mínima dele está em
 [Peculiaridades da Linguagem](../mechanics/language-quirks.md#closures-sao-como-se-parametriza-um-drone).
 

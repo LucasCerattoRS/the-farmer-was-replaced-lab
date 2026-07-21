@@ -8,7 +8,7 @@ construídos em cima delas que aparecem em quase todo script de `farms/`.
 
 | Função | Comportamento |
 |---|---|
-| `spawn_drone(function)` | Cria um drone novo **na posição do drone que chamou**, rodando `function`. Devolve um handle, ou `None` se você já estiver no teto. Custa 200 ticks se um drone foi criado, 1 caso contrário. |
+| `spawn_drone(task, *args)` | Cria um drone novo **na posição do drone que chamou**, rodando `task`. Quaisquer `*args` extras são copiados pra ele. Devolve um handle, ou `None` se você já estiver no teto. Custa 200 ticks se um drone foi criado, 1 caso contrário. |
 | `wait_for(drone)` | Bloqueia até `drone` terminar, e devolve o que a função dele retornou. 1 tick se já terminou. |
 | `has_finished(drone)` | Checagem de término que não bloqueia — `True`/`False`. Use pra consultar os workers enquanto faz outra coisa. |
 | `max_drones()` / `num_drones()` | Teto / contagem ativa no momento. |
@@ -29,8 +29,9 @@ for n in range(1, num_workers):
 ```
 
 Como o worker herda o tile de spawn, ele consegue descobrir a própria região só com
-`get_pos_x()` / `get_pos_y()` na largada — nenhuma coordenada precisa ser passada como
-argumento (funções passadas pra `spawn_drone` não recebem parâmetros).
+`get_pos_x()` / `get_pos_y()` na largada — nenhuma coordenada precisa ser passada. (O
+`spawn_drone` *aceita* `*args` extras que são copiados pra task, mas todo script deste repo
+parametriza por posição ou closures — veja a armadilha 4 abaixo.)
 
 ## O padrão de divisão por colunas
 
@@ -96,10 +97,13 @@ coluna para a fase seguinte — veja [Ordenação de Cactos](cactus-sorting.md#o
    área de efeito, então a conta de cobertura (quantos tiles por drone, de quanto em quanto
    tempo ele revisita) tem que considerar a água secando em tiles por onde o drone não passa
    há um tempo.
-4. **Funções passadas pra `spawn_drone` não recebem argumentos.** Pra parametrizar um worker
-   (ex.: "comece na coluna N"), os scripts ou leem `get_pos_x()` na largada (o truque de
-   herança acima) ou constroem a função dinamicamente — veja as closures `make_runner(col)`
-   em `pumpkin_megafarm_v2.py` e `sunflower_15petals.py`.
+4. **Parametrize workers por posição ou closures, não por argumentos.** O `spawn_drone(task,
+   *args)` do jogo atual *copia* argumentos extras pra task (a doc oficial mostra
+   `spawn_drone(harvest_column, i)`), mas o stub gerado pelo save contra o qual esses scripts
+   foram escritos declara `spawn_drone(function)`, sem parâmetros extras — então todo worker
+   aqui é parametrizado ou lendo `get_pos_x()` na largada (o truque de herança acima) ou
+   construindo a função dinamicamente. Veja as closures `make_runner(col)` em
+   `pumpkin_megafarm_v2.py` e `sunflower_15petals.py`.
 
 ## Scripts de referência
 

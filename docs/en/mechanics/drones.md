@@ -8,7 +8,7 @@ built on top of them that appear in nearly every script in `farms/`.
 
 | Function | Behavior |
 |---|---|
-| `spawn_drone(function)` | Spawns a new drone **at the position of the spawning drone**, running `function`. Returns a handle, or `None` if you're already at the drone cap. Costs 200 ticks if a drone was spawned, 1 otherwise. |
+| `spawn_drone(task, *args)` | Spawns a new drone **at the position of the spawning drone**, running `task`. Any extra `*args` are copied to it. Returns a handle, or `None` if you're already at the drone cap. Costs 200 ticks if a drone was spawned, 1 otherwise. |
 | `wait_for(drone)` | Blocks until `drone` finishes, then returns whatever its function returned. 1 tick if already done. |
 | `has_finished(drone)` | Non-blocking finished check — `True`/`False`. Use it to poll workers while doing other work. |
 | `max_drones()` / `num_drones()` | Cap / currently-active count. |
@@ -29,8 +29,9 @@ for n in range(1, num_workers):
 ```
 
 Because the worker inherits its spawn tile, it can find its own assigned region purely
-from `get_pos_x()` / `get_pos_y()` at startup — no coordinates need to be passed as
-arguments (functions passed to `spawn_drone` take no parameters).
+from `get_pos_x()` / `get_pos_y()` at startup — no coordinates need to be passed in.
+(`spawn_drone` *does* accept extra `*args` that get copied to the task, but every script in
+this repo parameterizes through position or closures instead — see pitfall 4 below.)
 
 ## The column-split pattern
 
@@ -96,9 +97,12 @@ column for the next phase — see [Cactus Sorting](cactus-sorting.md#multi-drone
 3. **Water/fertilizer are per-tile.** A drone only affects the tile it's standing on —
    there's no area-of-effect, so coverage math (how many tiles per drone, how often it
    revisits) has to account for water depleting on tiles a drone hasn't passed in a while.
-4. **Functions passed to `spawn_drone` take no arguments.** To parameterize a worker (e.g.
-   "start at column N"), scripts either read `get_pos_x()` at startup (inheritance trick
-   above) or build the function dynamically — see the `make_runner(col)` closures in
+4. **Parameterize workers through position or closures, not arguments.** The current game's
+   `spawn_drone(task, *args)` *does* copy extra arguments into the task (the official docs show
+   `spawn_drone(harvest_column, i)`), but the save-generated stub these scripts were written
+   against declares `spawn_drone(function)` with no extra parameters — so every worker here is
+   parameterized either by reading `get_pos_x()` at startup (the inheritance trick above) or by
+   building the function dynamically. See the `make_runner(col)` closures in
    `pumpkin_megafarm_v2.py` and `sunflower_15petals.py`.
 
 ## Reference scripts

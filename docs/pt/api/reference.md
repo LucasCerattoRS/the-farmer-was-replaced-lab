@@ -1,7 +1,8 @@
 # Referência da API
 
-Tudo abaixo vem do stub `__builtins__.py` gerado pelo jogo
-([mantido no repo](https://github.com/LucasCerattoRS/the-farmer-was-replaced-lab/blob/main/farms/lib/__builtins__.py) para autocomplete na IDE).
+As assinaturas abaixo são conferidas contra o `builtins.py` canônico que o jogo shippa com sua
+documentação oficial (51 definições), e cruzadas com o stub `__builtins__.py` gerado pelo save
+[mantido no repo](https://github.com/LucasCerattoRS/the-farmer-was-replaced-lab/blob/main/farms/lib/__builtins__.py) para autocomplete na IDE.
 As funções custam tempo de jogo ("ticks") salvo quando indicado.
 
 ## Movimento & sensores
@@ -42,7 +43,7 @@ As funções custam tempo de jogo ("ticks") salvo quando indicado.
 
 | Função | Retorna | Resumo |
 |---|---|---|
-| `spawn_drone(function)` | handle | Inicia outro drone rodando `function`; `None` se estiver no teto. |
+| `spawn_drone(task, *args)` | handle | Inicia outro drone rodando `task`; `*args` extras são copiados pra ele. `None` se estiver no teto. |
 | `wait_for(drone)` | valor | Bloqueia até aquele drone terminar; devolve o retorno dele. |
 | `has_finished(drone)` | `bool` | Checagem que não bloqueia. |
 | `max_drones()` / `num_drones()` | `int` | Teto de drones / ativos agora. |
@@ -67,6 +68,20 @@ As funções custam tempo de jogo ("ticks") salvo quando indicado.
 | `clear()` | Limpa a fazenda, volta pra (0,0), reseta o chapéu. |
 | `change_hat(hat)` | Cosmético — mas `Hats.Dinosaur_Hat` realmente inicia o minigame do dino. |
 | `do_a_flip()` / `pet_the_piggy()` | Essenciais. |
+
+## Coleções (listas, dicts, sets)
+
+Chamadas em estilo de método, exatamente como a doc oficial mostra (`elements.append(x)`). Os
+custos em ticks estão listados porque somam dentro de loops apertados.
+
+| Método | Retorna | Custo | Resumo |
+|---|---|---|---|
+| `list.append(x)` | `None` | 1 tick | Adiciona `x` ao fim da lista. |
+| `list.insert(i, x)` | `None` | `1 + len(list) - i` ticks | Insere `x` no índice `i`; os elementos seguintes deslocam pra direita. |
+| `list.pop(i)` | valor removido | `len(list) - i` ticks (1 se `i` omitido) | Remove e devolve o elemento em `i`; o último se `i` for omitido. |
+| `list.remove(x)` / `set.remove(x)` | `None` | lista: comparações + deslocamentos; set: 1 tick | Remove o primeiro elemento igual a `x`. |
+| `dict.pop(key)` | valor removido | 1 tick | Remove e devolve o valor guardado em `key`. |
+| `set.add(x)` | `None` | 1 tick | Adiciona `x` ao set. |
 
 ## Classes de constantes
 

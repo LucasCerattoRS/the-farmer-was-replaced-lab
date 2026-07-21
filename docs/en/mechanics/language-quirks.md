@@ -6,9 +6,7 @@ item on this page is demonstrated by a real file in
 most of them only a few lines long. They are deliberately tiny: each one exists to prove
 exactly one thing about the runtime.
 
-## `import` takes a window name, not a path
-
-This is the quirk that surprises everyone, and it is invisible until you try it.
+## Modules are files, and files are windows
 
 Your code lives in **windows**, and a window's name *is* its module name. There is no
 directory structure to import from, so `import` takes the literal name you typed on the
@@ -40,27 +38,78 @@ leaderboard_run(Leaderboards.Fastest_Reset, "NAME_OF_THE_WINDOW_WITH_THE_ABOVE_S
     Nothing warns you. Renaming a window silently invalidates every `import` and every
     `leaderboard_run`/`simulate` call that referenced it, and you only find out at runtime.
 
-## Circular imports
+## Importing a file *runs* it
 
-Two windows can import each other. `import_cycle_a.py` and `import_cycle_b.py` are the
-minimal case — A imports B, calls into it, and B imports A right back:
+This is the one that actually costs you resources. The first `import` of a file **executes the
+entire file**. If that file calls `harvest()`, importing it harvests. Import it again and
+nothing happens the second time — the module is cached from the first run.
+
+The guard is the same one Python uses. `__name__` is `"__main__"` when a file is run directly,
+and the file's own name when it is reached through an `import`:
 
 ```python
-# A
-def f0():
-    import ImportzyklusZubehör
-    ImportzyklusZubehör.f1()
-f0()
+a_global_variable = "global"
 
-# B
-def f1():
-    import ImportZyklus
-    ImportZyklus.f0()
+def main():
+    a_local_variable = "local"
+    # do things
+
+if __name__ == "__main__":
+    main()
 ```
 
-Both imports sit **inside** the functions rather than at the top of the file, which is what
-keeps the cycle from resolving at load time. Run it and you get mutual recursion across two
-files — which lands you squarely on the next quirk.
+Anything you don't want to fire on import goes inside that block. The game's own
+documentation recommends this structure, and it is why most files worth importing define
+their globals at top level and hide everything else behind `main()`.
+
+## Circular imports work — with `import`, not with `from`
+
+Two files importing each other is fine, and the reason is worth understanding because the
+*other* form breaks.
+
+With plain `import`, file `b` receives a **reference to the still-loading module `a`**. By the
+time anything actually calls into it, `a` has finished loading and the reference resolves:
+
+```python
+# file a
+import b
+x = 0
+
+# file b
+import a
+def f():
+    print(a.x)
+```
+
+Running `import a` walks: `a` starts → hits `import b` → `b` starts → hits `import a`, finds
+the half-loaded module and stores a *reference* to it → `b` defines `f` → `a` resumes and sets
+`x = 0`. Calling `b.f()` later prints `0`, because `a` is complete by then.
+
+Swap in `from a import *` and the same walk breaks:
+
+```python
+# file a
+from b import *
+x = 0
+
+# file b
+from a import *
+def f():
+    print(x)
+```
+
+`b` now **unpacks a snapshot** of whatever `a` contains at that moment — which is nothing,
+because `a` hasn't reached `x = 0` yet. There is no live reference, so `x` never appears and
+`b.f()` fails.
+
+!!! tip "The rule that avoids all of this"
+    Stick to `import file` rather than `from file import`, and wrap everything that isn't a
+    global definition in `if __name__ == "__main__":`. The `from` form also lets a name
+    collision silently overwrite your own variables.
+
+`import_cycle_a.py` and `import_cycle_b.py` in this repo are a runnable cycle — with the
+imports placed inside the functions, so calling into them produces mutual recursion across two
+files, which lands you on the next quirk.
 
 ## Recursion has a stack limit
 
@@ -142,9 +191,10 @@ in [Drones → pitfalls](drones.md#pitfalls-learned-the-hard-way) for a reason.
 
 ## Closures are how you parameterize a drone
 
-A function passed to `spawn_drone` **takes no arguments**. So how do you tell eight drones to
-start on eight different columns? You build eight different functions.
-`flip_party.py` is the minimal demonstration:
+Every farm in this collection parameterizes a worker by **building a fresh function**, never by
+passing arguments. The save-generated stub these scripts use declares `spawn_drone(function)`
+with no extra parameters, so to tell eight drones to start on eight different columns, you build
+eight different functions. `flip_party.py` is the minimal demonstration:
 
 ```python
 def make_drone(offset):
@@ -170,6 +220,10 @@ The alternative, used just as often, is the [spawn position inheritance
 trick](drones.md#spawn-position-inheritance): walk the spawner to the right tile first and let
 the worker read `get_pos_x()` at startup. Closures win when the parameter isn't a position.
 
+The current game also accepts `spawn_drone(task, *args)` and copies the extra arguments into the
+worker — the official docs show `spawn_drone(harvest_column, i)`. The scripts in this collection
+don't use that form, but it's a third option when a plain value is all you need to pass.
+
 ## `clear()` is the panic button
 
 ```python
@@ -194,7 +248,8 @@ edit code under pressure.
 | Quirk | Demonstrated by |
 |---|---|
 | `import` uses the window name, not a path | `import_cycle_a.py`, `launcher_v1.py` |
-| Circular imports work (imports inside functions) | `import_cycle_a.py` + `import_cycle_b.py` |
+| Importing a file executes it (once — then it's cached) | official `scripting/import.md` |
+| Circular imports work with `import`, break with `from … import *` | `import_cycle_a.py` + `import_cycle_b.py` |
 | Finite call stack | `stack_overflow.py` |
 | Undefined names fail only at runtime | `error_demo.py` |
 | `spawn_drone` returns `None` at the cap | `hat_parade.py` |

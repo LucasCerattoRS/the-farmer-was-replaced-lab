@@ -160,7 +160,7 @@ for i in range(1, 8):
     spawn_drone(criar_runner(c))
 ```
 
-Functions passed to `spawn_drone` take no arguments, so `criar_runner(col)` builds a
+The scripts in this repo don't pass arguments to a drone task, so `criar_runner(col)` builds a
 zero-argument closure that already knows its column. That pattern shows up across this repo —
 its minimal demonstration is on
 [Language Quirks](../mechanics/language-quirks.md#closures-are-how-you-parameterize-a-drone).
