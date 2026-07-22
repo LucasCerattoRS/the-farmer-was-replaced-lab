@@ -15,7 +15,23 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install pytest
+      - name: Parse the whole curated corpus (front end)
+        run: python interpreter/parse_corpus.py
+      - name: Behaviour tests
+        run: python -m pytest interpreter/tests/
+      - name: UNSPECIFIED.md is in sync with the catalogue
+        run: python interpreter/gen_unspecified.py --check
+
   build:
+    needs: test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

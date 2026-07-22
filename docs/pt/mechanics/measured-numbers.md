@@ -126,6 +126,17 @@ Estas são afirmações vivas neste site, ainda sem nenhuma medição por trás.
 **Quando uma medição contradisser uma dessas páginas, a página é corrigida** e a correção fica
 registrada no roadmap — igual às correções do Track 0.
 
+## Uma segunda fonte de perguntas abertas: o interpretador de referência
+
+O [Interpretador de Referência](../language/reference-interpreter.md) gera sua própria lista de
+lacunas. Sempre que o modelo executável precisa consultar um número que as fontes oficiais nunca
+deram, ele recusa — e cada recusa dessas está catalogada em
+[`interpreter/UNSPECIFIED.md`](https://github.com/LucasCerattoRS/the-farmer-was-replaced-lab/blob/main/interpreter/UNSPECIFIED.md).
+Alguns coincidem com a tabela acima (tempo de crescimento, morte de abóbora, pétalas); outros o
+modelo revelou por conta própria — por exemplo a **quantidade colhida**, para a qual as docs dão um
+*tipo* mas nunca uma quantidade base. Trate esse arquivo como uma segunda fonte de itens ⏳,
+derivada do código, ao lado de `farms/research/`.
+
 ## Rodando a batelada
 
 Os scripts só rodam **dentro do jogo** — a linguagem é um interpretador próprio, então não há

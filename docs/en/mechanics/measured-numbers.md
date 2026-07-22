@@ -126,6 +126,16 @@ These are live claims on this site with no measurement behind them yet.
 **When a measurement contradicts one of those pages, the page gets corrected** and the
 correction is logged in the roadmap — same as the Track 0 fixes.
 
+## A second feed of open questions: the reference interpreter
+
+The [Reference Interpreter](../language/reference-interpreter.md) generates its own list of holes.
+Wherever the executable model has to consult a number the official sources never gave, it refuses
+— and every such refusal is catalogued in
+[`interpreter/UNSPECIFIED.md`](https://github.com/LucasCerattoRS/the-farmer-was-replaced-lab/blob/main/interpreter/UNSPECIFIED.md).
+Some overlap the table above (grow time, pumpkin death, petals); others the model surfaced on its
+own — for example **harvest yield quantity**, which the docs give a *type* for but never a base
+amount. Treat that file as a second, code-derived source of ⏳ items alongside `farms/research/`.
+
 ## Running the batch
 
 The scripts only run **inside the game** — the language is a custom interpreter, so there is no

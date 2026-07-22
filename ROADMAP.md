@@ -204,16 +204,16 @@ this track earns its place beyond the exercise of writing it.
 
 ### 5d — Wire it back into the site
 
-- [ ] `language/reference-interpreter.md` (EN + PT) — what the model covers, what it refuses and
+- [x] `language/reference-interpreter.md` (EN + PT) — what the model covers, what it refuses and
       why, how to run it. Leads with the "not a reimplementation" disclaimer
-- [ ] Nav entry under *Language*, plus `Reference Interpreter: Interpretador de Referência` in
+- [x] Nav entry under *Language*, plus `Reference Interpreter: Interpretador de Referência` in
       `nav_translations`
-- [ ] Point `mechanics/measured-numbers.md` at the generated `UNSPECIFIED.md` as a second source
-      of ⏳ items, alongside `farms/research/`
-- [ ] `interpreter/README.md` — how to run the tests; disclaimer in the first paragraph
-- [ ] CI: add a `test` job to `.github/workflows/pages.yml` running `pytest` on Python 3.12
-      (matching the existing build job), and make `build` depend on it — a red model must not
-      deploy. `pytest` is a new dev dependency; the `.venv` currently only has mkdocs-material
+- [x] Point `mechanics/measured-numbers.md` at the generated `UNSPECIFIED.md` as a second source
+      of ⏳ items, alongside `farms/research/` (EN + PT)
+- [x] `interpreter/README.md` — how to run the tests; disclaimer in the first paragraph
+- [x] CI: added a `test` job to `.github/workflows/pages.yml` running `parse_corpus.py`, `pytest`
+      and `gen_unspecified.py --check` on Python 3.12; `build` now `needs: test`, so a red model
+      never deploys. `pytest` is the only new dev dependency
 
 ### Scope guard — deliberately out of scope
 
@@ -239,3 +239,9 @@ end to end is a bonus, never a requirement.
 - **Track 4 — contribute back:** full PT localisation audit in `tools/translation-audit.md`
   (came back clean bar two errors); PR [#32](https://github.com/Timiodon/TFWR-Translations/pull/32)
   opened on `Timiodon/TFWR-Translations`
+- **Track 5 — Reference interpreter:** the full model in `interpreter/` — front end (5a, corpus
+  45/46), pure evaluator (5b, 54 tests), world + verbs (5c), and site wiring (5d:
+  `language/reference-interpreter.md` EN + pt-BR, nav, `interpreter/README.md`, CI `test` job
+  gating `build`). `UNSPECIFIED.md` catalogues 10 loud holes, each a Track 2 item. Design rule:
+  every undocumented corner raises `Unspecified` instead of guessing; drones are a documented
+  refusal. Commits `aea584d`, `66cb22c`, `16e562c`, + this one

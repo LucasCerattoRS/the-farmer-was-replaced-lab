@@ -62,6 +62,7 @@ plugins:
             Functions & Scope: Funções & Escopo
             Collections: Coleções
             Modules & Imports: Módulos & Imports
+            Reference Interpreter: Interpretador de Referência
             Mechanics: Mecânicas
             Crops & Economy: Culturas & Economia
             Drones & Multi-Drone: Drones & Multi-Drone
@@ -98,6 +99,7 @@ nav:
       - Functions & Scope: language/functions-and-scope.md
       - Collections: language/collections.md
       - Modules & Imports: language/modules-and-imports.md
+      - Reference Interpreter: language/reference-interpreter.md
   - Mechanics:
       - Crops & Economy: mechanics/crops.md
       - Drones & Multi-Drone: mechanics/drones.md
