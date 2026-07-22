@@ -85,7 +85,9 @@ New section, derived from the official `scripting/` docs (766 lines) plus what t
 The part nobody else has done systematically. `get_tick_count()` is free to call and
 `simulate()` returns elapsed time, so the game is instrumentable.
 
-- [ ] Build `farms/research/` with measurement scripts, each printing a clean table
+- [x] Build `farms/research/` with measurement scripts, each printing a clean table —
+      `tick_costs.py`, `grow_times.py`, `pumpkin_death_rate.py`, `sunflower_petals.py`,
+      `cactus_chain.py` (commit `396b974`). **Written and reviewed, not yet run in game**
 - [ ] **Tick cost per operation** — `move`, `harvest`, `plant`, `till`, `swap`, `measure`,
       `use_item`, `spawn_drone`. The stub documents some; verify all and find the undocumented
 - [ ] **Grow times per entity** vs. the "~0.5s / ~4s / ~7s" figures the docs currently assert
@@ -94,6 +96,8 @@ The part nobody else has done systematically. `get_tick_count()` is free to call
 - [ ] **Cactus chain-harvest payout** vs. field sortedness
 - [ ] `mechanics/measured-numbers.md` publishing results with method, sample size and the
       script that produced each one. Where a measurement contradicts a current page, fix the page
+      — **page shipped in `396b974` with the ✅ sourced tick-cost table complete; every measured
+      number is still ⏳ and stays empty until the batch run**
 
 > Track 2 needs the game running to collect data. The scripts can be written and reviewed
 > first, then run in a batch.
@@ -102,7 +106,7 @@ The part nobody else has done systematically. `get_tick_count()` is free to call
 
 One page. Short, fully cited, honest about the gaps.
 
-- [ ] `about/the-game.md` — Timon Herzog, Metaroot, Unity, full shipped credits, release
+- [x] `about/the-game.md` — Timon Herzog, Metaroot, Unity, full shipped credits, release
       history, the CC0 documentation decision and what it enables. Explicitly notes that the
       interpreter implementation is not public, so this repo documents behaviour, not internals
 
@@ -112,11 +116,104 @@ The official PT translation is partly machine-translated by the dev's own admiss
 (`Languages/README.md`), and this repo just produced a careful PT translation of ~1500 lines
 of the same subject matter.
 
-- [ ] Read the official `PT/docs` against `EN/docs` and log concrete errors
-- [ ] Check terminology consistency both ways — align our site with the official terms where
-      theirs is better, fix theirs where ours is
-- [ ] Open a PR on `Timiodon/TFWR-Translations` (their README asks for the name to credit)
-- [ ] Note the outcome here
+- [x] Read the official `PT/docs` against `EN/docs` and log concrete errors — full audit in
+      [`tools/translation-audit.md`](tools/translation-audit.md). Mechanical checks (placeholders,
+      `@Key` structure, numbers, code spans) came back **clean**; scope covered all 16
+      `PT/docs/scripting/` files + all 14 `Strings/*.txt`, skipping `docs/unlocks/` (README says
+      those change). Two concrete errors found.
+- [x] Check terminology consistency both ways — done in the audit. No changes to this site were
+      required; our English-kept `set`/`dict` are actually closer to the upstream guideline than
+      the official "Conjuntos"/"Dicionários".
+- [x] Open a PR on `Timiodon/TFWR-Translations` (their README asks for the name to credit) —
+      **[#32](https://github.com/Timiodon/TFWR-Translations/pull/32)**: untranslate the
+      `"Variables"` unlock name in `operators.md`, fix misplaced backticks in `tuples.md`.
+      Credited to Lucas Ceratto (@LucasCerattoRS).
+- [x] Note the outcome here — PR open and mergeable (+2/−2, 2 files).
+
+## Track 5 — Reference interpreter (executable semantics)
+
+Track 1 wrote down what the language does, in prose. This track makes that prose **runnable**:
+a small tree-walking interpreter for the TFWR subset, in Python, in `interpreter/`.
+
+**What it is not.** It is *not* a reimplementation of the game's interpreter, and must never be
+described as one anywhere on the site — those internals are not public (see *Primary sources*).
+It is a **model of the documented behaviour**: the same claims the `language/` pages make in
+words, in a form that can be executed and tested.
+
+Ground rule 2 applies here with full force, and the design enforces it mechanically: **where the
+official sources are silent, the model raises `Unspecified` instead of quietly inheriting
+CPython's answer.** That inverts the usual risk — every hole becomes loud instead of invisible.
+Each `Unspecified` it raises is a Track 2 experiment waiting to be run, which is the main reason
+this track earns its place beyond the exercise of writing it.
+
+**Where the code lives:** `interpreter/` at the repo root, a sibling of `farms/` and `tools/` —
+**not** inside `farms/`. That folder is the curated save mirror driven by
+`tools/sync_map.json`; keeping authored code out of it protects the sync invariant.
+
+### 5a — Front end
+
+- [ ] `interpreter/tfwrlang/lexer.py` — tokens plus `NEWLINE` / `INDENT` / `DEDENT`;
+      indentation-delimited blocks, as the official `scripting/` docs describe them
+- [ ] `interpreter/tfwrlang/nodes.py` — one node type per construct the `language/` pages
+      document, and nothing else. (Named `nodes`, not `ast`, to avoid shadowing the stdlib
+      module inside the package.)
+- [ ] `interpreter/tfwrlang/parser.py` — recursive descent; the precedence table comes from
+      `language/operators.md`, which is itself derived from the official `operators.md`
+- [ ] **Milestone — parse the whole corpus:** all 42 curated scripts in `farms/` plus the 5 in
+      `farms/research/`, zero errors. The corpus already exists, it is real end-game code, and
+      it makes "does the grammar match the language?" an objective question
+- [ ] Every parse failure gets triaged and logged as one of: **(a)** a gap in the `language/`
+      pages → fix the page; **(b)** the script uses something outside the documented subset →
+      note it as a finding. Both outcomes are worth more than a clean run
+
+### 5b — Evaluator, pure core (no game)
+
+- [ ] `interpreter/tfwrlang/interp.py` — values and truthiness, operators, `if` / `while` /
+      `for` / `break` / `continue`, `def` / call / `return`, scope + `global` + closures,
+      lists / dicts / sets / tuples
+- [ ] `interpreter/tfwrlang/errors.py` — `Unspecified`, and a registry recording every hole hit
+- [ ] A test per behaviour the Track 1 pages already assert, each citing the page it comes from:
+    - loops and branches do **not** create a scope — `i` is still `2` after `for i in range(3)`
+    - closures capture, which is what makes the closure-factory pattern work
+    - the call stack is finite → a depth limit that raises. The real limit is **⏳ unmeasured**:
+      make it a parameter, do not invent a number
+    - `while True:` exits only on `break`; with no game delay to slow it, an iteration budget
+      guards the test suite
+- [ ] `interpreter/UNSPECIFIED.md`, generated from the registry — the feed of new Track 2 items
+
+### 5c — World model and built-ins
+
+- [ ] `interpreter/tfwrlang/world.py` — an N×N **torus** grid (the wrap is documented, and it is
+      the top pitfall on `drones.md`), ground / entity / water state, inventory, tick counter
+- [ ] `interpreter/tfwrlang/builtins.py` — `get_pos_x` / `get_pos_y` / `get_world_size` /
+      `move` / `can_move` / `get_entity_type` / `get_ground_type` / `can_harvest` / `harvest` /
+      `plant` / `till` / `measure` / `num_items` / `get_tick_count` / `quick_print`, each
+      charging the tick cost from the ✅ sourced table on `mechanics/measured-numbers.md`
+- [ ] Grow times, pumpkin death rate and petal distribution stay **⏳** — those are precisely the
+      Track 2 numbers. Model them as injected parameters that default to raising `Unspecified`
+- [ ] Drones (`spawn_drone`, `wait_for`, `has_finished`) **last, and only if the scheduling
+      semantics can be sourced.** Inter-drone ordering is the least documented thing in the game;
+      if it can't be sourced, a documented refusal *is* the deliverable
+
+### 5d — Wire it back into the site
+
+- [ ] `language/reference-interpreter.md` (EN + PT) — what the model covers, what it refuses and
+      why, how to run it. Leads with the "not a reimplementation" disclaimer
+- [ ] Nav entry under *Language*, plus `Reference Interpreter: Interpretador de Referência` in
+      `nav_translations`
+- [ ] Point `mechanics/measured-numbers.md` at the generated `UNSPECIFIED.md` as a second source
+      of ⏳ items, alongside `farms/research/`
+- [ ] `interpreter/README.md` — how to run the tests; disclaimer in the first paragraph
+- [ ] CI: add a `test` job to `.github/workflows/pages.yml` running `pytest` on Python 3.12
+      (matching the existing build job), and make `build` depend on it — a red model must not
+      deploy. `pytest` is a new dev dependency; the `.venv` currently only has mkdocs-material
+
+### Scope guard — deliberately out of scope
+
+No bytecode VM, no optimizer, no compiler back end: tree-walking is the point. No attempt to
+match the game's real timing beyond the documented tick costs, and no reproduction of its error
+message wording. This does not become a headless way to play the game — a curated script running
+end to end is a bonus, never a requirement.
 
 ---
 
@@ -128,3 +225,10 @@ of the same subject matter.
 - **Track 1 — Language reference:** 6 new pages (values & variables, operators, control flow,
   functions & scope, collections, modules & imports), EN + pt-BR, wired into nav under a new
   *Language* section; quirks page repointed at it as the surprising subset. Build green.
+- **Track 3 — About the game:** `about/the-game.md`, EN + pt-BR (commit `396b974`)
+- **Track 2 — measurement kit:** 5 scripts in `farms/research/` and
+  `mechanics/measured-numbers.md` with the full ✅ tick-cost table transcribed from the canonical
+  `builtins.py` (commit `396b974`). The ⏳ half of the page waits on an in-game batch run
+- **Track 4 — contribute back:** full PT localisation audit in `tools/translation-audit.md`
+  (came back clean bar two errors); PR [#32](https://github.com/Timiodon/TFWR-Translations/pull/32)
+  opened on `Timiodon/TFWR-Translations`
