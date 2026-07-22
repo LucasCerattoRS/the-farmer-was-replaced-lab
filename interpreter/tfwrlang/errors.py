@@ -77,6 +77,12 @@ UNSPECIFIED_CATALOG = {
         "The distribution of sunflower petal counts. Assumed 1-15, uniform, unverified. The world "
         "model requires the distribution to be injected."
     ),
+    "harvest-yield": (
+        "How many items a harvest credits. crops.md documents the item *type* per crop (Grass -> "
+        "Hay, Bush/Tree -> Wood, ...) and the formulas for the two that scale (cactus size^2, "
+        "pumpkin size^3), but the flat base quantity for the others is never stated. The world "
+        "model refuses to credit an invented amount and requires a yield model to be injected."
+    ),
     "drone-scheduling": (
         "How multiple drones are interleaved. Inter-drone ordering is the least documented part "
         "of the game. The model refuses `spawn_drone`/`wait_for` rather than invent a scheduler."

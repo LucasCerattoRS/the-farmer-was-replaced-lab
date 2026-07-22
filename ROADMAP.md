@@ -185,17 +185,22 @@ this track earns its place beyond the exercise of writing it.
 
 ### 5c — World model and built-ins
 
-- [ ] `interpreter/tfwrlang/world.py` — an N×N **torus** grid (the wrap is documented, and it is
-      the top pitfall on `drones.md`), ground / entity / water state, inventory, tick counter
-- [ ] `interpreter/tfwrlang/builtins.py` — `get_pos_x` / `get_pos_y` / `get_world_size` /
+- [x] `interpreter/tfwrlang/world.py` — an N×N **torus** grid (the wrap is modelled exactly, per
+      the top pitfall on `drones.md`), ground / entity / water state, inventory, tick counter, plus
+      the `Symbol`/`Direction` constants and the injectable `ModelSet`
+- [x] `interpreter/tfwrlang/builtins.py` — `get_pos_x` / `get_pos_y` / `get_world_size` /
       `move` / `can_move` / `get_entity_type` / `get_ground_type` / `can_harvest` / `harvest` /
       `plant` / `till` / `measure` / `num_items` / `get_tick_count` / `quick_print`, each
-      charging the tick cost from the ✅ sourced table on `mechanics/measured-numbers.md`
-- [ ] Grow times, pumpkin death rate and petal distribution stay **⏳** — those are precisely the
-      Track 2 numbers. Model them as injected parameters that default to raising `Unspecified`
-- [ ] Drones (`spawn_drone`, `wait_for`, `has_finished`) **last, and only if the scheduling
-      semantics can be sourced.** Inter-drone ordering is the least documented thing in the game;
-      if it can't be sourced, a documented refusal *is* the deliverable
+      charging the tick cost from the ✅ sourced table on `mechanics/measured-numbers.md` —
+      including the two-price group (200 on success, 1 otherwise). Constants installed:
+      `Entities` / `Items` / `Grounds` / `Direction` + bare `North`/`East`/`South`/`West`
+- [x] Grow times, pumpkin death rate and petal distribution stay **⏳** — injected via `ModelSet`,
+      whose defaults raise `Unspecified` the moment they're consulted. A fourth hole surfaced while
+      building this — **harvest yield quantity** is unspecified for flat crops too — so it was added
+      to the catalogue (`harvest-yield`) rather than guessed. Catalogue now **10 topics**
+- [x] Drones (`spawn_drone`, `wait_for`, `has_finished`) — the scheduling semantics **cannot** be
+      sourced (inter-drone ordering is undocumented), so they are a **documented refusal**:
+      `Unspecified('drone-scheduling')`. That refusal *is* the deliverable, per the ground rules
 
 ### 5d — Wire it back into the site
 
