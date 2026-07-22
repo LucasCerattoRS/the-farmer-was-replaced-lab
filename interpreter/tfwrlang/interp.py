@@ -143,9 +143,15 @@ def tfwr_str(value):
 
 
 class Interpreter:
-    def __init__(self, extra_builtins=None, registry=None, max_call_depth=None):
+    def __init__(self, extra_builtins=None, registry=None, max_call_depth=None,
+                 max_loop_iterations=None):
         self.registry = registry if registry is not None else Registry()
         self.max_call_depth = max_call_depth  # None => the game's limit is Unspecified
+        # A test-suite guard, NOT a game behaviour: the real game imposes no iteration cap (it
+        # slows each tick instead), so this defaults to None. Tests set it so that a regression
+        # which breaks `break`/loop-exit fails fast instead of hanging CI. Not an Unspecified
+        # topic — it models nothing the docs leave open, it only bounds a runaway test.
+        self.max_loop_iterations = max_loop_iterations
         self.depth = 0
         self.output = []
         self.global_env = Environment()
@@ -211,7 +217,9 @@ class Interpreter:
             self.exec_block(node.orelse, env)
 
     def exec_While(self, node, env):
+        iterations = 0
         while self.as_bool(self.eval(node.test, env), node):
+            iterations = self._tick_loop(iterations)
             try:
                 self.exec_block(node.body, env)
             except _Break:
@@ -220,7 +228,9 @@ class Interpreter:
                 continue
 
     def exec_For(self, node, env):
+        iterations = 0
         for item in self.iterate(self.eval(node.iter, env), node):
+            iterations = self._tick_loop(iterations)
             self.assign(node.target, item, env)
             try:
                 self.exec_block(node.body, env)
@@ -228,6 +238,14 @@ class Interpreter:
                 break
             except _Continue:
                 continue
+
+    def _tick_loop(self, iterations):
+        iterations += 1
+        if self.max_loop_iterations is not None and iterations > self.max_loop_iterations:
+            raise TfwrRuntimeError(
+                f"loop iteration budget ({self.max_loop_iterations}) exceeded"
+            )
+        return iterations
 
     def exec_Import(self, node, env):
         self.registry.raise_(

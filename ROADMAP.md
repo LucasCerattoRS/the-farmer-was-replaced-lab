@@ -152,34 +152,36 @@ this track earns its place beyond the exercise of writing it.
 
 ### 5a — Front end
 
-- [ ] `interpreter/tfwrlang/lexer.py` — tokens plus `NEWLINE` / `INDENT` / `DEDENT`;
+- [x] `interpreter/tfwrlang/lexer.py` — tokens plus `NEWLINE` / `INDENT` / `DEDENT`;
       indentation-delimited blocks, as the official `scripting/` docs describe them
-- [ ] `interpreter/tfwrlang/nodes.py` — one node type per construct the `language/` pages
+- [x] `interpreter/tfwrlang/nodes.py` — one node type per construct the `language/` pages
       document, and nothing else. (Named `nodes`, not `ast`, to avoid shadowing the stdlib
       module inside the package.)
-- [ ] `interpreter/tfwrlang/parser.py` — recursive descent; the precedence table comes from
+- [x] `interpreter/tfwrlang/parser.py` — recursive descent; the precedence table comes from
       `language/operators.md`, which is itself derived from the official `operators.md`
-- [ ] **Milestone — parse the whole corpus:** all 42 curated scripts in `farms/` plus the 5 in
-      `farms/research/`, zero errors. The corpus already exists, it is real end-game code, and
-      it makes "does the grammar match the language?" an objective question
-- [ ] Every parse failure gets triaged and logged as one of: **(a)** a gap in the `language/`
-      pages → fix the page; **(b)** the script uses something outside the documented subset →
-      note it as a finding. Both outcomes are worth more than a clean run
+- [x] **Milestone — parse the whole corpus:** `interpreter/parse_corpus.py` parses **45/46**
+      curated scripts (all of `farms/`, incl. `farms/research/`) cleanly. Zero syntax failures
+- [x] Every parse failure gets triaged and logged. One finding: `farms/mazes/maze_gold_dfs.py`
+      uses slicing `a[i:j]`, which is **outside the documented subset** — logged as a `NotSupported`
+      finding (case **b**), not a grammar gap
 
 ### 5b — Evaluator, pure core (no game)
 
-- [ ] `interpreter/tfwrlang/interp.py` — values and truthiness, operators, `if` / `while` /
+- [x] `interpreter/tfwrlang/interp.py` — values and truthiness, operators, `if` / `while` /
       `for` / `break` / `continue`, `def` / call / `return`, scope + `global` + closures,
       lists / dicts / sets / tuples
-- [ ] `interpreter/tfwrlang/errors.py` — `Unspecified`, and a registry recording every hole hit
-- [ ] A test per behaviour the Track 1 pages already assert, each citing the page it comes from:
+- [x] `interpreter/tfwrlang/errors.py` — `Unspecified`, and a registry recording every hole hit
+- [x] A test per behaviour the Track 1 pages already assert, each citing the page it comes from —
+      **39 tests in `interpreter/tests/`, all green.** Covers:
     - loops and branches do **not** create a scope — `i` is still `2` after `for i in range(3)`
-    - closures capture, which is what makes the closure-factory pattern work
-    - the call stack is finite → a depth limit that raises. The real limit is **⏳ unmeasured**:
-      make it a parameter, do not invent a number
-    - `while True:` exits only on `break`; with no game delay to slow it, an iteration budget
-      guards the test suite
-- [ ] `interpreter/UNSPECIFIED.md`, generated from the registry — the feed of new Track 2 items
+      (`test_scope.py`)
+    - closures capture, which is what makes the closure-factory pattern work (`test_scope.py`)
+    - the call stack is finite → a depth limit that raises, via the `max_call_depth` **parameter**;
+      no number is invented, and with no limit set the model imposes none (`test_control_flow.py`)
+    - `while True:` exits only on `break`; a `max_loop_iterations` budget (a test guard, **not** a
+      game rule) keeps a regression from hanging the suite (`test_control_flow.py`)
+- [x] `interpreter/UNSPECIFIED.md`, generated from the catalogue by `interpreter/gen_unspecified.py`
+      (`--check` mode fails CI on drift) — the feed of new Track 2 items, currently **9 topics**
 
 ### 5c — World model and built-ins
 
