@@ -40,10 +40,14 @@ para ser rodado. Medir um deles transforma uma recusa num número documentado.
 
 O front end é checado contra todo o corpus curado: `parse_corpus.py` faz o parse de **45 de 46**
 scripts em [`farms/`](https://github.com/LucasCerattoRS/the-farmer-was-replaced-lab/tree/main/farms)
-sem erros. O único que resiste — `maze_gold_dfs.py` — usa slicing de lista `a[i:j]`, que nenhuma
-página desta seção documenta. Isso é registrado como um **finding**, não remendado: ou a linguagem
-tem slicing e as docs estão incompletas, ou ela não tem e o script foi além do subconjunto. Até
-ser medido no jogo, o estado honesto é "não documentado."
+sem erros. O único que resiste — `maze_gold_dfs.py` — inverte uma lista com `ALL_DIRECTIONS[::-1]`,
+e slicing não aparece em **lugar nenhum** das fontes oficiais (verificado: `lists.md` e a classe
+`list` do `builtins.py` canônico documentam indexação e os quatro métodos de mutação, nunca
+`[start:stop:step]`). Isso triou de forma limpa numa **lacuna de documentação**: o jogo suporta
+slicing — o corpus é a evidência — mas as docs oficiais o omitem, agora descrito em
+[Coleções](collections.md). O modelo continua recusando slicing (`NotSupported`) porque ele
+acompanha o subconjunto *oficialmente documentado*, e essa recusa foi justamente o que revelou a
+lacuna.
 
 ## O que ele recusa, e por quê
 

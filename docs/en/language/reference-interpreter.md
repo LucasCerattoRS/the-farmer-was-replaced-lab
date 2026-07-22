@@ -38,10 +38,13 @@ run. Measuring one turns a refusal into a documented number.
 
 The front end is checked against the whole curated corpus: `parse_corpus.py` parses **45 of 46**
 scripts in [`farms/`](https://github.com/LucasCerattoRS/the-farmer-was-replaced-lab/tree/main/farms)
-cleanly. The one holdout — `maze_gold_dfs.py` — uses list slicing `a[i:j]`, which no page in this
-section documents. That is logged as a **finding**, not patched over: either the language has
-slicing and the docs are incomplete, or it doesn't and the script reaches past the subset. Until
-it's measured in game, the honest state is "not documented."
+cleanly. The one holdout — `maze_gold_dfs.py` — reverses a list with `ALL_DIRECTIONS[::-1]`, and
+slicing appears **nowhere** in the official sources (checked: `lists.md` and the canonical
+`builtins.py` list class document indexing and the four mutation methods, never `[start:stop:step]`).
+That triaged cleanly into a **documentation gap**: the game supports slicing — the corpus is the
+evidence — but the official docs omit it, now written up on
+[Collections](collections.md). The model keeps refusing slicing (`NotSupported`) because it tracks
+the *officially documented* subset, and that refusal is exactly what surfaced the gap.
 
 ## What it refuses, and why
 

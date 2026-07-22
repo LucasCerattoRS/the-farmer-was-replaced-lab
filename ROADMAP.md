@@ -162,8 +162,12 @@ this track earns its place beyond the exercise of writing it.
 - [x] **Milestone — parse the whole corpus:** `interpreter/parse_corpus.py` parses **45/46**
       curated scripts (all of `farms/`, incl. `farms/research/`) cleanly. Zero syntax failures
 - [x] Every parse failure gets triaged and logged. One finding: `farms/mazes/maze_gold_dfs.py`
-      uses slicing `a[i:j]`, which is **outside the documented subset** — logged as a `NotSupported`
-      finding (case **b**), not a grammar gap
+      uses slicing (`ALL_DIRECTIONS[::-1]`). Triaged against the primary sources — slicing is in
+      **none** of them (`lists.md`, canonical `builtins.py` list class), yet a curated script uses
+      it — so it's a **documentation gap** (case **a**): the game supports slicing, the docs omit
+      it. Written up on `language/collections.md` (EN + PT). The model still refuses it
+      (`NotSupported`) because it tracks the *officially documented* subset — the refusal is what
+      surfaced the gap
 
 ### 5b — Evaluator, pure core (no game)
 

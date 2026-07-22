@@ -26,6 +26,18 @@ Os métodos de mutação — `append`, `insert`, `pop`, `remove` — são chamad
 cada um custa ticks (`insert`/`pop` custam mais quanto mais longe do fim você mexe). `len(list)`
 dá o comprimento.
 
+!!! note "Slicing funciona, mas as docs oficiais nunca mencionam"
+    O interpretador do jogo aceita slices no estilo Python — o `maze_gold_dfs.py` inverte sua
+    lista de direções com `ALL_DIRECTIONS[::-1]`, e ele roda. Mas slicing não aparece em **lugar
+    nenhum** das fontes oficiais: `lists.md` documenta acesso por índice único (`entities[1]`) e os
+    quatro métodos de mutação, e a classe `list` do `builtins.py` canônico expõe apenas `append` /
+    `insert` / `pop` / `remove` / `len` / `__getitem__`. Nenhum `[start:stop:step]` em canto algum.
+    Então é uma verdadeira **lacuna de documentação**, não uma limitação do jogo — registrada aqui
+    porque o corpus é nossa evidência de que é suportado. O
+    [Interpretador de Referência](reference-interpreter.md), que modela só o subconjunto
+    *oficialmente documentado*, recusa slicing de propósito (`NotSupported`); essa recusa foi
+    justamente o que revelou esta lacuna.
+
 !!! warning "Semântica de referência — e mutar enquanto itera"
     `b = a` dá a `a` e `b` a **mesma** lista, então `b.pop()` esvazia `a` também. Duas
     consequências vivas neste repo: uma lista construída por um drone e lida por outro é de fato

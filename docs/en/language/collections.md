@@ -24,6 +24,17 @@ The mutation methods — `append`, `insert`, `pop`, `remove` — are called meth
 costs ticks (`insert`/`pop` cost more the further from the end you touch). `len(list)` gives the
 length.
 
+!!! note "Slicing works, but the official docs never mention it"
+    The game's interpreter accepts Python-style slices — `maze_gold_dfs.py` reverses its
+    direction list with `ALL_DIRECTIONS[::-1]`, and it runs. Yet slicing appears **nowhere** in
+    the official sources: `lists.md` documents single-index access (`entities[1]`) and the four
+    mutation methods, and the canonical `builtins.py` list class exposes only `append` / `insert` /
+    `pop` / `remove` / `len` / `__getitem__`. No `[start:stop:step]` anywhere. So it's a genuine
+    **documentation gap**, not a game limitation — flagged here because the corpus is our evidence
+    it's supported. The [Reference Interpreter](reference-interpreter.md), which models only the
+    *officially documented* subset, deliberately refuses slicing (`NotSupported`); that refusal is
+    exactly what surfaced this gap.
+
 !!! warning "Reference semantics — and mutating while iterating"
     `b = a` gives `a` and `b` the **same** list, so `b.pop()` empties `a` too. Two live
     consequences in this repo: a list built by one drone and read by another is genuinely
