@@ -30,6 +30,8 @@ Tudo que está documentado no site é respaldado por código que de fato rodou.
 | `farms/dinosaur/` | Solver do minigame da maçã e farming de ossos em padrão de cobra |
 | `farms/leaderboards/` | Runs de nível competitivo, incluindo um reset totalmente automatizado |
 | `farms/lib/` | O próprio stub `__builtins__.py` do jogo, para autocomplete na IDE |
+| `interpreter/` | Modelo executável da linguagem documentada (lexer, parser, avaliador, mundo) + testes |
+| `jornada/` | Diário de um save novo jogado do zero (`Saves/pygame2`) |
 | `tools/` | Sincronização do save e conversão de Markdown → BBCode da Steam |
 
 Índice anotado de cada script: [`farms/README.md`](farms/README.md).
@@ -61,6 +63,53 @@ O mapeamento de nomes fica em `tools/sync_map.json`.
 ```bash
 python tools/steam_bbcode.py docs/pt/tutorials/01-multi-drone.md | clip
 ```
+
+## Estado (out/2026)
+
+- Site no ar via GitHub Pages; **todo push em `main` publica** (`.github/workflows/pages.yml`),
+  depois de rodar os testes do interpretador.
+- Interpretador de referência (Track 5 do `ROADMAP.md`): 5a–5c prontas, 56 testes verdes.
+- Track 2 (medir números do jogo: custo de tick, tempo de crescimento, taxa de morte da abóbora)
+  ainda aberta — ver `ROADMAP.md` e a issue #1.
+
+## Como rodar o interpretador e os testes
+
+Python 3.12+, só biblioteca padrão (+ `pytest` para os testes):
+
+```bash
+python interpreter/parse_corpus.py          # parseia todos os scripts de farms/
+python -m pytest interpreter/tests/         # testes de comportamento
+python interpreter/gen_unspecified.py --check  # UNSPECIFIED.md em dia com o catálogo
+```
+
+## Tecnologias
+
+Python puro (interpretador e ferramentas), MkDocs Material + `mkdocs-static-i18n` (site
+bilíngue), GitHub Actions (teste → build → deploy no Pages), PowerShell (`sync_save.ps1`).
+
+## Pendências
+
+- Track 2 do roadmap: medições empíricas no jogo (preenchem `mechanics/measured-numbers.md`).
+- Track 5d: ligar o interpretador de volta às páginas do site.
+- `farms/mazes/maze_gold_dfs.py` usa fatiamento (`a[i:j]`), fora do subconjunto documentado —
+  o parser recusa de propósito (é um achado registrado, não um bug).
+- Revisão de 08/10: comparações encadeadas (`a < b < c`) agora são recusadas com
+  `NotSupported` em vez de calcular `(a < b) < c` em silêncio; `a[f()] += 1` passou a avaliar
+  o índice uma vez só. Ambos com teste em `interpreter/tests/test_operators.py`.
+
+## Para estudar
+
+1. **Indentação vira token** — `interpreter/tfwrlang/lexer.py:50` (`tokenize`): uma pilha de
+   colunas emite `INDENT`/`DEDENT`, igual ao CPython; colchetes abertos suspendem isso
+   (linha 55, `depth`), por isso listas podem quebrar linha.
+2. **Descida recursiva com precedência** — `interpreter/tfwrlang/parser.py:242` em diante: cada
+   nível de precedência é uma função (`parse_or` → `parse_and` → … → `parse_power`); `**` é
+   associativo à direita porque `parse_power` chama `parse_unary` no lado direito.
+3. **Controle de fluxo por exceção** — `interpreter/tfwrlang/interp.py:25-35`: `break`,
+   `continue` e `return` são exceções Python capturadas pelo laço/função mais próximo.
+4. **"Falhe alto onde a documentação cala"** — `interpreter/tfwrlang/errors.py:50`
+   (`UNSPECIFIED_CATALOG`) e `interp.py:479` (`as_bool`): em vez de herdar a resposta do
+   Python, o modelo levanta `Unspecified`, e o catálogo gera `UNSPECIFIED.md` sozinho.
 
 ## Onde o jogo guarda seu código (Windows)
 

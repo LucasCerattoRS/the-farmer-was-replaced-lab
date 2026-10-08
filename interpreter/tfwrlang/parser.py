@@ -265,6 +265,14 @@ class Parser:
     def parse_comparison(self):
         left = self.parse_arith()
         while True:
+            if isinstance(left, nodes.Compare) and (
+                (self.cur.type == "OP" and self.cur.value in _COMPARE_OPS)
+                or self.is_kw("in")
+                or (self.is_kw("not") and self.toks[self.pos + 1].value == "in")
+            ):
+                # Python reads `a < b < c` as `a < b and b < c`; a left fold would silently
+                # compute `(a < b) < c`. operators.md documents binary comparisons only.
+                raise NotSupported("chained comparisons (a < b < c) are not part of the documented subset")
             if self.cur.type == "OP" and self.cur.value in _COMPARE_OPS:
                 op = self.advance().value
                 left = nodes.Compare(op, left, self.parse_arith(), line=left.line)

@@ -189,10 +189,16 @@ class Interpreter:
             self.assign(target, value, env)
 
     def exec_AugAssign(self, node, env):
-        current = self.eval(node.target, env)
+        target = node.target
+        if isinstance(target, nodes.Subscript):
+            # Evaluate container and index once: `a[f()] += 1` must call f() a single time.
+            obj = self.eval(target.value, env)
+            key = self.eval(target.index, env)
+            target = nodes.Subscript(nodes.Const(obj), nodes.Const(key), line=target.line)
+        current = self.eval(target, env)
         rhs = self.eval(node.value, env)
         result = self.binary_op(node.op[:-1], current, rhs, node)
-        self.assign(node.target, result, env)
+        self.assign(target, result, env)
 
     def exec_Global(self, node, env):
         for name in node.names:

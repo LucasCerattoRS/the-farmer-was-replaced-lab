@@ -60,3 +60,30 @@ def test_membership_in_collections():
     assert _val("2 in [1, 2, 3]") is True
     assert _val('"k" in {"k": 1}') is True
     assert _val("5 not in [1, 2, 3]") is True
+
+
+def test_chained_comparison_is_rejected_not_silently_misread():
+    # operators.md documents binary comparisons only. Python reads `2 == 2 == 2` as
+    # `2 == 2 and 2 == 2` (True); a naive left fold reads it as `(2 == 2) == 2` -> False.
+    # Outside the documented subset, so it must fail loudly instead of answering wrong.
+    from tfwrlang.errors import NotSupported
+    with pytest.raises(NotSupported, match="chained"):
+        run("x = 2 == 2 == 2\n")
+    with pytest.raises(NotSupported, match="chained"):
+        run("x = 1 < 2 < 3\n")
+
+
+def test_augassign_evaluates_subscript_index_once():
+    # `a[f()] += 1` must call f() once, like `+=` in Python: the target is read and written
+    # through the same evaluated index.
+    interp = run(
+        "n = 0\n"
+        "def f():\n"
+        "\tglobal n\n"
+        "\tn += 1\n"
+        "\treturn 0\n"
+        "a = [10]\n"
+        "a[f()] += 1\n"
+    )
+    assert interp.global_env.get("n") == 1.0
+    assert interp.global_env.get("a") == [11.0]
