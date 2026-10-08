@@ -91,6 +91,42 @@ UNSPECIFIED_CATALOG = {
         "`import` resolves a module by the game window's name, not a file path. There is no "
         "file-system model for that here, so `import` is refused rather than faked."
     ),
+    "game-time": (
+        "How game seconds relate to ticks. The canonical builtins.py says `get_time()` returns "
+        "seconds since the start of the game and costs 0 ticks, but never says how many seconds a "
+        "tick is (or whether the relation is fixed). The world model reads the time from an "
+        "injected clock instead of inventing a rate."
+    ),
+    "cactus-size": (
+        "The size a cactus reaches. cactus-sorting.md documents the range (0-9) and that "
+        "`measure()` reads it, but not how the size is drawn. The world model asks an injected "
+        "model for it."
+    ),
+    "water-amount": (
+        "How much one `use_item(Items.Water)` raises the water level under the drone (and whether "
+        "it decays over time). The docs only say water is a 0-1 level and that using water "
+        "'fills it up'. The world model applies an injected function instead of a guessed step."
+    ),
+    "swap-eligibility": (
+        "Which entities `swap()` accepts. builtins.py says it 'doesn't work on all entities' and "
+        "that it works when one or both sides are `None`, but not which ones refuse. The model "
+        "swaps `None` freely and asks an injected model about every pair of real entities."
+    ),
+    "world-full-size": (
+        "The size `set_world_size(n)` returns to when `n < 3` ('back to its full size'). That "
+        "depends on unlocks and is not stated, so the model refuses instead of picking a number."
+    ),
+    "clear-state": (
+        "What a tile looks like right after `clear()`. builtins.py says it 'removes everything "
+        "from the farm' and moves the drone to (0,0), but not whether the ground resets to "
+        "Grassland or whether water survives. The model removes every entity, zeroes the water, "
+        "keeps the ground as it was, and records that choice."
+    ),
+    "cactus-chain": (
+        "Whether harvesting one cactus also harvests sorted neighbours. cactus-sorting.md "
+        "describes the cascade, but it has never been measured (cactus_chain.py exists to measure "
+        "it). The model harvests only the tile under the drone and records the choice."
+    ),
     "default-arg-eval-time": (
         "When a default-argument expression is evaluated (at `def` time or at call time). The "
         "docs call `def` an assignment but never pin this down. The model evaluates defaults at "
