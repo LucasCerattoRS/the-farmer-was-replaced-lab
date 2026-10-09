@@ -144,3 +144,21 @@ def test_spawn_drone_is_a_documented_refusal():
 def test_measure_on_unmodelled_entity_is_not_supported():
     with pytest.raises(NotSupported):
         make("plant(Entities.Cactus)\nm = measure()\n", world=W.World(size=3))
+
+
+# -- get_water (api/reference.md: float 0-1 under the drone; measured-numbers.md: 1 tick) ------
+def test_get_water_reads_current_tile_follows_position_and_costs_one_tick():
+    world = W.World(size=3)
+    world.tile(0, 0).water = 0.25
+    world.tile(1, 0).water = 0.75
+    interp, world = make_world_interpreter(world=world)
+
+    interp.run_source("a = get_water()\n")
+    assert interp.global_env.get("a") == 0.25
+    assert isinstance(interp.global_env.get("a"), float)
+    assert world.ticks == 1
+
+    ticks_before = world.ticks
+    interp.run_source("move(East)\nb = get_water()\n")
+    assert interp.global_env.get("b") == 0.75
+    assert world.ticks - ticks_before == 200 + 1  # move (200) + one sense (1)
