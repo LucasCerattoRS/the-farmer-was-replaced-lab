@@ -71,6 +71,10 @@ def make_world_builtins(world):
         t = world.tile()
         return t.entity  # a Symbol, or None
 
+    def get_water():
+        charge(1)
+        return float(world.tile().water)  # 0..1 under the drone; no water source is modelled yet
+
     def num_items(item):
         charge(1)
         name = item.name if isinstance(item, W.Symbol) else item
@@ -168,6 +172,7 @@ def make_world_builtins(world):
         "get_world_size": get_world_size,
         "get_ground_type": get_ground_type,
         "get_entity_type": get_entity_type,
+        "get_water": get_water,
         "num_items": num_items,
         "can_move": can_move,
         "measure": measure,
