@@ -6,8 +6,7 @@ import re
 import validar_stub as v
 
 RAIZ = v.RAIZ
-# Erro proposital: o script serve para demonstrar uma chamada a função inexistente.
-ESPERADO = {("farms/basics/experiments/error_demo.py", "Make_Error() não é do stub nem foi definido no script")}
+ESPERADO = v.ESPERADO
 
 
 def test_validador_pega_funcao_que_nao_existe_no_stub():
@@ -56,3 +55,27 @@ def test_trilha_aponta_para_scripts_que_existem():
     for c in set(caminhos):
         base = "" if c.startswith("jornada") else "farms"
         assert os.path.exists(os.path.join(RAIZ, base, c)), c
+
+
+def test_comando_documentado_do_validador_sai_com_zero():
+    # README manda rodar `python tools/validar_stub.py`; o erro do error_demo.py é proposital.
+    assert v.main([]) == 0
+    assert v.main([os.path.join(RAIZ, "farms", "basics", "experiments", "error_demo.py")]) == 1
+
+
+def test_comandos_dos_docs_apontam_para_arquivos_que_existem():
+    achados = 0
+    ruins = []
+    mds = [os.path.join(RAIZ, f) for f in ("README.md", "README.pt-BR.md")]
+    for base in ("docs", "interpreter", "farms", "jornada"):
+        for d, _, fs in os.walk(os.path.join(RAIZ, base)):
+            mds += [os.path.join(d, f) for f in fs if f.endswith(".md")]
+    for md in mds:
+        texto = open(md, encoding="utf-8").read()
+        for bloco in re.findall(r"```(?:bash|sh|shell|powershell|text)\n(.*?)```", texto, re.S):
+            for cmd in re.findall(r"^\s*(?:\$ )?(?:python3?|\.\\?|sh|bash)\s+(\S+\.(?:py|ps1|sh))", bloco, re.M):
+                achados += 1
+                if not os.path.exists(os.path.join(RAIZ, cmd.replace("\\", "/"))):
+                    ruins.append(f"{os.path.relpath(md, RAIZ)}: {cmd}")
+    assert achados >= 8
+    assert not ruins, ruins

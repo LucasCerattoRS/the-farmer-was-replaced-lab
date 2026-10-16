@@ -20,5 +20,7 @@ jobs:
         run: python interpreter/parse_corpus.py
       - name: UNSPECIFIED.md em dia
         run: python interpreter/gen_unspecified.py --check
+      - name: Comando documentado do validador (exit 0)
+        run: python tools/validar_stub.py
       - name: Scripts contra o stub e testes do interpretador
         run: python -m pytest tests/ interpreter/tests/
