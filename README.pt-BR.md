@@ -34,7 +34,7 @@ Tudo que está documentado no site é respaldado por código que de fato rodou.
 | `jornada/` | Diário de um save novo jogado do zero (`Saves/pygame2`) |
 | `tools/` | Sincronização do save e conversão de Markdown → BBCode da Steam |
 
-Índice anotado de cada script: [`farms/README.md`](farms/README.md).
+Índice anotado de cada script: [`farms/README.md`](farms/README.md). Ordem de estudo, do mais simples ao avançado: [`farms/TRILHA.md`](farms/TRILHA.md).
 
 ## Buildando os docs localmente
 
@@ -78,7 +78,8 @@ Python 3.12+, só biblioteca padrão (+ `pytest` para os testes):
 
 ```bash
 python interpreter/parse_corpus.py          # parseia todos os scripts de farms/
-python -m pytest interpreter/tests/         # testes de comportamento
+python -m pytest tests/ interpreter/tests/  # scripts x stub + comportamento
+python tools/validar_stub.py                # confere chamadas dos scripts com o stub
 python interpreter/gen_unspecified.py --check  # UNSPECIFIED.md em dia com o catálogo
 ```
 

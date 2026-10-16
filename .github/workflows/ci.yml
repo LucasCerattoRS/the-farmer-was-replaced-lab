@@ -1,0 +1,24 @@
+name: CI
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  testes:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install pytest
+      - name: Parser do corpus inteiro
+        run: python interpreter/parse_corpus.py
+      - name: UNSPECIFIED.md em dia
+        run: python interpreter/gen_unspecified.py --check
+      - name: Scripts contra o stub e testes do interpretador
+        run: python -m pytest tests/ interpreter/tests/
