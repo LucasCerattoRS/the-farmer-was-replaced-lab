@@ -35,7 +35,7 @@ Exact duplicates in the save (leaderboard working copies) were deduplicated.
 | `maze_gold_dfs.py` | Iterative DFS with path stack, per-drone direction permutations | end |
 | `maze_gold_16drones_bfs.py` | Map-first BFS routing on a 4×4 grid of mazes | end |
 | `gold_25drones.py` / `gold_25drones_alt.py` | 25 drones, 5×5 maze grid, ~45 re-rolls per treasure | end |
-| `treasure_hunt_8drones_buy.py` | Wall-follower variant that buys its own supplies | late/end |
+| `treasure_hunt_8drones_buy.py` | Wall-follower variant that checks its Weird Substance stock before each maze (the stub has no buy function) | late/end |
 | `maze_5x5_25drones.py` | Grid saturated with static drones | late |
 | `make_maze_snippet.py` | 3-line building block: bush + Weird Substance | late |
 
@@ -53,6 +53,17 @@ Exact duplicates in the save (leaderboard working copies) were deduplicated.
 | `power_collector.py` | Cascading drone spawns for sunflower Power | Sunflowers |
 | `bone_collector.py` | Serpentine bone collector with staged offsets | Dinosaur |
 | `leaderboard_run.py` / `launcher.py` | Run orchestration | — |
+
+## research/
+| File | Description |
+|---|---|
+| `tick_costs.py` | Exact tick cost per operation (difference of two `get_tick_count()` reads) |
+| `grow_times.py` | Real growth time per entity, from `plant()` to `can_harvest()` |
+| `pumpkin_death_rate.py` | Death rate of single, isolated pumpkins |
+| `sunflower_petals.py` | Petal distribution of freshly planted sunflowers |
+| `cactus_chain.py` | Chain-harvest payout versus how sorted the field is |
+
+Measurement kit for the Track 2 questions in the [`ROADMAP`](../ROADMAP.md); each script prints a table.
 
 ## lib/
 `__builtins__.py` — the API stub the game generates. Point your IDE at it for

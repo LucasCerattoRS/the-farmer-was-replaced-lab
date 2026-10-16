@@ -1,11 +1,9 @@
 # ------------------- Configurações e Compras -------------------
 
 def garantir_recursos(quantidade):
-	# Compra Weird Substance se o estoque estiver baixo
-	if num_items(Items.Weird_Substance) < quantidade:
-		# Tenta comprar o necessário para 5 rodadas para economizar tempo
-		buy_amount = quantidade * 5
-		buy(Items.Weird_Substance, buy_amount)
+	# O stub oficial não tem função de compra (buy/trade): Weird Substance só se
+	# produz. Se o estoque não cobre o labirinto, devolve False e o laço principal tenta de novo.
+	return num_items(Items.Weird_Substance) >= quantidade
 
 # ------------------- Geração do labirinto -------------------
 
@@ -20,11 +18,11 @@ def create_maze():
 	# Cálculo da substância para o nível máximo desbloqueado
 	substance_req = get_world_size() * 2 ** (num_unlocked(Unlocks.Mazes) - 1)
 	
-	# Verifica e compra antes de usar
-	garantir_recursos(substance_req)
+	# Verifica o estoque antes de usar
+	if not garantir_recursos(substance_req):
+		return False
 	
-	use_item(Items.Weird_Substance, substance_req)
-	return True
+	return use_item(Items.Weird_Substance, substance_req)
 
 # ------------------- Helpers de direção -------------------
 
