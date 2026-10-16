@@ -63,6 +63,16 @@ def test_comando_documentado_do_validador_sai_com_zero():
     assert v.main([os.path.join(RAIZ, "farms", "basics", "experiments", "error_demo.py")]) == 1
 
 
+def comandos_em(bloco):
+    # `python x.py`, `sh x.sh`, `bash x.sh` (com espaço) ou `.\x.ps1` / `./x.sh` (sem espaço).
+    return re.findall(r"^\s*(?:\$ )?(?:(?:python3?|sh|bash)\s+|\.[\\/])(\S+\.(?:py|ps1|sh))", bloco, re.M)
+
+
+def test_extrator_reconhece_python_ps1_e_sh():
+    bloco = "python tools/a.py\n.\\tools\\b.ps1 -Apply\n./tools/c.sh\nsh tools/d.sh\n"
+    assert comandos_em(bloco) == ["tools/a.py", "tools\\b.ps1", "tools/c.sh", "tools/d.sh"]
+
+
 def test_comandos_dos_docs_apontam_para_arquivos_que_existem():
     achados = 0
     ruins = []
@@ -73,7 +83,7 @@ def test_comandos_dos_docs_apontam_para_arquivos_que_existem():
     for md in mds:
         texto = open(md, encoding="utf-8").read()
         for bloco in re.findall(r"```(?:bash|sh|shell|powershell|text)\n(.*?)```", texto, re.S):
-            for cmd in re.findall(r"^\s*(?:\$ )?(?:python3?|\.\\?|sh|bash)\s+(\S+\.(?:py|ps1|sh))", bloco, re.M):
+            for cmd in comandos_em(bloco):
                 achados += 1
                 if not os.path.exists(os.path.join(RAIZ, cmd.replace("\\", "/"))):
                     ruins.append(f"{os.path.relpath(md, RAIZ)}: {cmd}")
