@@ -14,3 +14,7 @@
 ## Limites / pendências
 - Validação estática: nenhum script foi executado no jogo.
 - Não corrigido: README cita "42 scripts"/"56 testes" (hoje 46 / 57+); `.venv/Scripts/...` nos docs é só Windows; `sync_save.py` (Linux) não é citado nos READMEs.
+
+## Revisão (16/10/2026)
+- Falso negativo: o regex exigia espaço depois de `.\`, então `.\tools\sync_save.ps1` nunca era checado (mutação com caminho trocado passava). Extrator virou `comandos_em()` e aceita `.\x.ps1` / `./x.sh`; novo `test_extrator_reconhece_python_ps1_e_sh` (falhava antes da correção).
+- `python -m pytest tests/ interpreter/tests/` → 65 passed; mutação em `.\tools\sync_save.ps1` no README.md agora falha o teste.
