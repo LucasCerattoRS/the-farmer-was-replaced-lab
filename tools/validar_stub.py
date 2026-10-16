@@ -74,6 +74,11 @@ def validar_fonte(fonte, nome, stub):
     return sorted(erros)
 
 
+# Erro proposital: error_demo.py existe para mostrar uma chamada a função inexistente.
+# Só vale na varredura padrão; passando arquivos explícitos, nada é ignorado.
+ESPERADO = {("farms/basics/experiments/error_demo.py", "Make_Error() não é do stub nem foi definido no script")}
+
+
 def arquivos_padrao():
     for base in ("farms", os.path.join("jornada", "codigo")):
         for d, _, fs in os.walk(os.path.join(RAIZ, base)):
@@ -87,6 +92,7 @@ def arquivos_padrao():
 def main(argv):
     stub = carregar_stub()
     total = 0
+    esperados = 0
     for caminho in argv or arquivos_padrao():
         rel = os.path.relpath(caminho, RAIZ)
         try:
@@ -94,9 +100,12 @@ def main(argv):
         except SyntaxError as e:
             erros = [(e.lineno or 0, f"sintaxe: {e.msg}")]
         for lin, msg in erros:
+            if not argv and (rel.replace(os.sep, "/"), msg) in ESPERADO:
+                esperados += 1
+                continue
             print(f"{rel}:{lin}: {msg}")
-        total += len(erros)
-    print(f"{total} problema(s)")
+            total += 1
+    print(f"{total} problema(s)" + (f" ({esperados} esperado(s) ignorado(s))" if esperados else ""))
     return 1 if total else 0
 
 
