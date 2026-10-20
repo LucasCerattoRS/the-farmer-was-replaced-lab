@@ -85,6 +85,11 @@ plugins:
             "04 · Dinosaur Apple Solver": "04 · Solver da Maçã do Dinossauro"
             "05 · Polyculture Optimization": "05 · Otimização de Policultura"
             "06 · Seed Hunting": "06 · Caça a Seeds"
+            Journey: Jornada
+            "01 · Harvest & Repeat": "01 · Colher e repetir"
+            "02 · for & the Grid": "02 · for e a grade"
+            "03 · Soil & Carrots": "03 · Solo e cenoura"
+            "04 · Mixing Plants": "04 · Misturando plantas"
             API Reference: Referência da API
             About: Sobre
             About the Game: Sobre o Jogo
@@ -122,6 +127,12 @@ nav:
       - "04 · Dinosaur Apple Solver": tutorials/04-dinosaur-apple.md
       - "05 · Polyculture Optimization": tutorials/05-polyculture.md
       - "06 · Seed Hunting": tutorials/06-seed-hunting.md
+  - Journey:
+      - Overview: journey/index.md
+      - "01 · Harvest & Repeat": journey/01-colher-e-repetir.md
+      - "02 · for & the Grid": journey/02-for-e-a-grade.md
+      - "03 · Soil & Carrots": journey/03-solo-e-cenoura.md
+      - "04 · Mixing Plants": journey/04-misturando-plantas.md
   - API Reference: api/reference.md
   - About:
       - About the Game: about/the-game.md
