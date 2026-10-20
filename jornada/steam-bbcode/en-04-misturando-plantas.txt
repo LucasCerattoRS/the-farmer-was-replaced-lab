@@ -1,0 +1,95 @@
+[h1]04 · Mixing plants[/h1]
+
+[h2]What the game unlocked[/h2]
+Nothing new. Here you combine [b]for[/b], [b]till[/b], [b]plant[/b] and [b]can_harvest[/b] to grow **two plants in the
+same column**: carrots on the ends and bush in the middle, or the reverse.
+
+[h2]The idea[/h2]
+Carrots spend Hay and Wood; bush yields Wood. Mixing keeps Wood coming while you plant carrots.
+The pattern is a [b]3-tile column[/b]: A, B and C.
+
+The point that confuses people: the 3-tile pattern [b]is[/b] the whole column. So [b]for i[/b] (one lap per
+column) is enough, and each tile gets its own block of code.
+
+[h2]Phase 1: prepare and plant (carrot, bush, carrot)[/h2]
+
+[code]
+for i in range(get_world_size()):
+    till()                      # tile A: till
+    plant(Entities.Carrot)
+    move(North)
+
+    plant(Entities.Bush)        # tile B: bush grows on grass, no till
+    move(North)
+
+    till()                      # tile C: till
+    plant(Entities.Carrot)
+    move(North)                 # 3 steps: the map wraps, back to A
+
+    move(East)                  # column done
+[/code]
+
+Tracing one column (side 3, the border wraps):
+
+| Step | Tile | Does |
+|---|---|---|
+| 1 | A | [b]till[/b], carrot, move |
+| 2 | B | bush, move |
+| 3 | C | [b]till[/b], carrot, move and wrap back to A |
+| 4 | A | [b]move(East)[/b] goes to the next column |
+
+[h2]Phase 2: harvest and replant the same thing[/h2]
+
+[code]
+while True:
+    for i in range(get_world_size()):
+        if can_harvest():       # tile A
+            harvest()
+            plant(Entities.Carrot)
+        move(North)
+
+        if can_harvest():       # tile B
+            harvest()
+            plant(Entities.Bush)
+        move(North)
+
+        if can_harvest():       # tile C
+            harvest()
+            plant(Entities.Carrot)
+        move(North)
+
+        move(East)
+[/code]
+
+Three rules hold this up:
+
+1. [b]Each tile is handled once per lap.[/b]
+2. [b][b]move[/b] stays outside the [b]if[/b][/b], as in milestone 01.
+3. [b]Each block replants what the tile had.[/b] The code does not "discover" the pattern: it repeats
+   it by position, which is why the pattern holds.
+
+For the reverse (bush on the ends, carrot in the middle), swap the three blocks: bush on A and C,
+[b]till[/b] and carrot on B.
+
+[h2]Common mistakes[/h2]
+
+[list]
+[*][b]Repeating the pattern in a [b]for j[/b].[/b] That gives 9 tiles per column and shifts everything (see milestone 02).
+[*][b][b]till()[/b] on a tile that is already soil.[/b] It undoes the soil (see milestone 03).
+[*][b]Running phase 1 on an already tilled farm.[/b] Same problem. Run [b]clear()[/b] first: ✅ it removes
+  everything, moves the drone to (0,0) and turns the soil back into grass.
+[*][b]Harvesting without testing.[/b] Each tile needs its own [b]if can_harvest()[/b].
+[/list]
+
+[h2]Limit: only works on side 3[/h2]
+The 3-tile pattern is written by hand. On a bigger side it drifts. For any size, the code has to
+know which tile of the column it is on, which requires comparing numbers. ⏳ Once the game unlocks
+operators, the idea is [b]if j == 0: … elif j == 1: … else: …[/b], or [b]j % 3[/b].
+
+[h2]Exercise[/h2]
+1. Build the version with bush on the ends and carrots in the middle.
+2. Run phase 2 for 1 minute and note the Wood before and after. ⏳ The yield of the mix against
+   pure bush [b]has not been measured yet[/b].
+3. Explain, without running, what happens if phase 1 uses [b]till()[/b] on all three tiles.
+
+Previous: [url=03-solo-e-cenoura.md]Soil and carrots[/url].

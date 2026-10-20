@@ -1,0 +1,80 @@
+[h1]02 · [b]for[/b] and the grid[/h1]
+
+[h2]What the game unlocked[/h2]
+[b]for[/b], [b]range()[/b], [b]get_world_size()[/b]. The farm stopped being a row and became a square, so
+[b]move(North)[/b] alone no longer reaches every tile.
+
+[h2]The idea: one [b]for[/b] inside another[/h2]
+
+[b]for[/b] runs its body [b]once per element[/b]. It does not test a condition the way [b]while[/b] does.
+[b]for i in range(3)[/b] runs 3 times, with [b]i[/b] equal to 0, 1 and 2.
+
+To walk the square, think of a building. The outer [b]for[/b] ([b]i[/b]) is the [b]floor[/b]; the inner one
+([b]j[/b]) is the [b]doors[/b] on that floor:
+
+[code]
+for i in range(get_world_size()):        # one lap per column
+    for j in range(get_world_size()):    # one lap per tile in the column
+        harvest()
+        move(North)
+    move(East)                           # column done: go to the next one
+[/code]
+
+The rule that clears up the confusion: **the inner [b]for[/b] runs completely on every lap of the outer
+one, and starts again from zero.** For side 3, the inner body runs 3 × 3 = 9 times.
+
+[b]Indentation[/b] says when each line runs:
+
+[list]
+[*]inside [b]j[/b]: once per tile;
+[*]outside [b]j[/b] but inside [b]i[/b]: once per column (here, [b]move(East)[/b]).
+[/list]
+
+If [b]move(East)[/b] sat inside [b]j[/b], the drone would step sideways on every tile and never build a column.
+
+[h2]To repeat forever: [b]while[/b] on the outside[/h2]
+
+[code]
+while True:
+    for i in range(get_world_size()):
+        for j in range(get_world_size()):
+            if can_harvest():
+                harvest()
+            move(North)
+        move(East)
+[/code]
+
+The [b]for[/b] walks the farm [b]once[/b]; [b]while True[/b] repeats that. The other way round, a [b]while[/b]
+inside the [b]for[/b] would trap the drone on the first tile. And since [b]get_world_size()[/b] is read on
+every lap, the code stays correct when the farm grows.
+
+[h2]The most common mistake: repeating the pattern twice[/h2]
+
+You want the carrot, bush, carrot pattern on a 3-tile column. The temptation:
+
+[code]
+# WRONG
+for i in range(get_world_size()):
+    for j in range(get_world_size()):
+        # ...handling of the 3 tiles A, B and C in here...
+    move(East)
+[/code]
+
+The body already handles [b]3 tiles[/b], and [b]for j[/b] repeats it 3 times: 9 tiles per column. Worse,
+if the body ends without moving, the next lap starts on the tile where the previous one stopped,
+and the result comes out shifted.
+
+When the pattern already covers the whole column, [b][b]for i[/b] alone is enough[/b]: one block per tile
+and a [b]move(North)[/b] after each.
+
+!!! info "Current limit"
+    This hand-written pattern only works on a [b]side-3[/b] farm. For any side length the code has
+    to know "which tile of the column is this", meaning it has to compare [b]j[/b] with a number.
+    That needs operators ([b]==[/b], [b]%[/b]), which the game has not unlocked at this stage.
+
+[h2]Exercise[/h2]
+1. Make the drone harvest the whole farm and end on the starting tile.
+2. Without running it: with side 4, how many times does the [b]j[/b] body run? And [b]move(East)[/b]?
+3. Run the version with [b]move(East)[/b] inside [b]j[/b] and describe the drone's path.
+
+Previous: [url=01-colher-e-repetir.md]Harvest and repeat[/url] · Next: [url=03-solo-e-cenoura.md]Soil and carrots[/url].

@@ -1,0 +1,81 @@
+[h1]02 · [b]for[/b] e a grade[/h1]
+
+[h2]O que o jogo liberou[/h2]
+[b]for[/b], [b]range()[/b], [b]get_world_size()[/b]. A fazenda deixou de ser uma fila e virou um quadrado,
+então só [b]move(North)[/b] não alcança mais todas as casas.
+
+[h2]A ideia: um [b]for[/b] dentro do outro[/h2]
+
+O [b]for[/b] roda o corpo [b]uma vez por elemento[/b]. Ele não testa condição, como faz o [b]while[/b].
+[b]for i in range(3)[/b] roda 3 vezes, com [b]i[/b] valendo 0, 1 e 2.
+
+Para percorrer o quadrado, pense num prédio. O [b]for[/b] de fora ([b]i[/b]) é o [b]andar[/b]; o de dentro
+([b]j[/b]) são as [b]portas[/b] daquele andar:
+
+[code]
+for i in range(get_world_size()):        # uma volta por coluna
+    for j in range(get_world_size()):    # uma volta por casa da coluna
+        harvest()
+        move(North)
+    move(East)                           # coluna acabou: vai para a seguinte
+[/code]
+
+A regra que resolve a confusão: **o [b]for[/b] de dentro roda inteiro a cada volta do de fora, e
+recomeça do zero.** Para lado 3, o corpo de dentro roda 3 × 3 = 9 vezes.
+
+A [b]indentação[/b] diz quando cada linha roda:
+
+[list]
+[*]dentro do [b]j[/b]: a cada casa;
+[*]fora do [b]j[/b], mas dentro do [b]i[/b]: a cada coluna (aqui, o [b]move(East)[/b]).
+[/list]
+
+Se o [b]move(East)[/b] ficasse dentro do [b]j[/b], o drone andaria para o lado a cada casa e não
+faria coluna nenhuma.
+
+[h2]Para repetir para sempre: [b]while[/b] por fora[/h2]
+
+[code]
+while True:
+    for i in range(get_world_size()):
+        for j in range(get_world_size()):
+            if can_harvest():
+                harvest()
+            move(North)
+        move(East)
+[/code]
+
+O [b]for[/b] percorre a fazenda [b]uma vez[/b]; o [b]while True[/b] repete isso. Ao contrário, um [b]while[/b]
+dentro do [b]for[/b] prenderia o drone na primeira casa. E como o [b]get_world_size()[/b] é lido a cada
+volta, o código continua certo quando a fazenda crescer.
+
+[h2]O erro mais comum: repetir o padrão duas vezes[/h2]
+
+Quer plantar o padrão cenoura, bush, cenoura numa coluna de 3 casas. A tentação:
+
+[code]
+# ERRADO
+for i in range(get_world_size()):
+    for j in range(get_world_size()):
+        # ...tratamento das 3 casas A, B e C aqui dentro...
+    move(East)
+[/code]
+
+O corpo já trata [b]3 casas[/b], e o [b]for j[/b] o repete 3 vezes: são 9 casas por coluna. Pior, se o
+corpo termina sem andar, a volta seguinte começa na casa onde a anterior parou, e o resultado
+sai deslocado.
+
+Quando o padrão já cobre a coluna inteira, [b]o [b]for i[/b] sozinho basta[/b]: um bloco para cada casa
+e um [b]move(North)[/b] depois de cada um.
+
+!!! info "Limite de agora"
+    Esse padrão escrito à mão só vale para fazenda de [b]lado 3[/b]. Para qualquer lado, o código
+    precisa saber "qual casa da coluna é esta", ou seja, comparar [b]j[/b] com um número. Isso exige
+    operadores ([b]==[/b], [b]%[/b]), que o jogo ainda não liberou nesta etapa.
+
+[h2]Exercício[/h2]
+1. Faça o drone colher a fazenda inteira e voltar à casa inicial.
+2. Sem rodar: com lado 4, quantas vezes o corpo do [b]j[/b] roda? E o [b]move(East)[/b]?
+3. Rode a versão com o [b]move(East)[/b] dentro do [b]j[/b] e descreva o caminho do drone.
+
+Anterior: [url=01-colher-e-repetir.md]Colher e repetir[/url] · Próximo: [url=03-solo-e-cenoura.md]Solo e cenoura[/url].

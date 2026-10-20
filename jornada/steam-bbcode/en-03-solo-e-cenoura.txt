@@ -1,0 +1,84 @@
+[h1]03 · Soil and carrots[/h1]
+
+[h2]What the game unlocked[/h2]
+[b]till()[/b] and [b]plant(Entities.Carrot)[/b].
+
+[h2]The idea[/h2]
+Carrots only grow on [b]tilled soil[/b]. You till a tile with [b]till()[/b]. Planting costs items: **1 Hay
+and 1 Wood** per carrot, deducted when [b]plant[/b] runs.
+
+[list]
+[*]📖 Growth time: between 4.8 and 7.2 seconds.
+[*]✅ An empty tile is grass; after [b]till()[/b] it becomes soil.
+[/list]
+
+[h2]The trap: [b]till()[/b] toggles[/h2]
+
+[code]
+till()   # grass -> soil
+till()   # soil  -> grass  (undone!)
+[/code]
+
+Calling [b]till()[/b] on a tile that is already soil [b]turns it back into grass[/b]. Harvesting the carrot
+leaves the soil tilled, so the tile does not need [b]till()[/b] again. The classic mistake is tilling on
+every harvest:
+
+[code]
+# WRONG: on lap 2 the tile is already soil, till undoes it, plant fails
+if can_harvest():
+    harvest()
+    till()
+    plant(Entities.Carrot)
+[/code]
+
+Symptom: the tile keeps alternating between grass and carrot.
+
+[h2]The fix: two phases[/h2]
+
+[code]
+# Phase 1: till and plant, once per tile
+for i in range(get_world_size()):
+    for j in range(get_world_size()):
+        till()
+        plant(Entities.Carrot)
+        move(North)
+    move(East)
+
+# Phase 2: harvest and replant, no till
+while True:
+    for i in range(get_world_size()):
+        for j in range(get_world_size()):
+            if can_harvest():
+                harvest()
+                plant(Entities.Carrot)
+            move(North)
+        move(East)
+[/code]
+
+!!! warning "Running phase 1 twice breaks it"
+    Because [b]till()[/b] toggles, a second run turns the already tilled tiles back into grass. ✅
+    [b]clear()[/b] removes everything, moves the drone to (0,0) and turns the soil back into grass; use
+    it to start over.
+
+[h2]"Why is the harvest uneven?"[/h2]
+
+You run phase 2 and the drone harvests tile 1, skips tiles 2 and 3, and on the next lap picks up
+the ones it missed. It is not a code bug. ✅ Each carrot draws its own time between 4.8 and 7.2 s,
+so some are not ready when the drone passes, and it moves on anyway. [b]move[/b] outside the [b]if[/b] does
+exactly that.
+
+⏳ You can make the drone wait on the tile with [b]while True[/b] and [b]break[/b], trading the mismatch for
+idle time. We have not measured which pays more.
+
+[h2]Economy[/h2]
+Wood comes from bush; Hay comes from harvested grass. Carrots spend both. Turning the whole farm
+into carrots cuts the production of what they consume, so a [b]mix[/b] (carrots on the middle tiles
+and bush on the corners, or the reverse) keeps Wood coming in. ⏳ Which proportion pays most has
+not been measured.
+
+[h2]Exercise[/h2]
+1. Reproduce the mistake ([b]till()[/b] inside the [b]if[/b]), watch the tile alternate, then fix it.
+2. Build a carrot, bush, carrot column on side 3. Hint: the pattern fits in a single [b]for i[/b].
+3. Measure: note the Wood before and after 1 minute of phase 2. What was the yield?
+
+Previous: [url=02-for-e-a-grade.md][b]for[/b] and the grid[/url] · Next: [url=04-misturando-plantas.md]Mixing plants[/url].

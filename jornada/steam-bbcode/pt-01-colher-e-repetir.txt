@@ -1,0 +1,59 @@
+[h1]01 · Colher e repetir[/h1]
+
+[h2]O que o jogo liberou[/h2]
+[b]while[/b], [b]if[/b]/[b]else[/b], [b]can_harvest()[/b], [b]harvest()[/b], [b]move()[/b] com [b]North[/b]/[b]East[/b]/[b]South[/b]/[b]West[/b],
+[b]plant()[/b] com [b]Entities.Bush[/b].
+
+[h2]A ideia[/h2]
+Seu drone só executa o que está no script, e o script roda uma vez e acaba. Para a fazenda
+trabalhar sozinha, o código fica dentro de um [b]while True:[/b], que repete para sempre.
+
+Dentro dele, a pergunta é sempre a mesma: [b]"a planta desta casa está pronta?"[/b]
+
+[code]
+while True:
+    if can_harvest():
+        harvest()
+        plant(Entities.Bush)
+    move(North)
+[/code]
+
+Leia assim: repita sempre; se a planta está pronta, colha e replante; [b]depois[/b] ande, tendo
+colhido ou não.
+
+[h2]Três fatos que importam[/h2]
+
+[list]
+[*]✅ [b]Casa vazia é grama.[/b] [b]plant(Entities.Bush)[/b] funciona nela sem preparar o solo.
+[*]✅ [b]A borda dá a volta.[/b] Andar [b]North[/b] na última linha leva você à primeira. Numa fazenda
+  de lado 3, três passos para o norte trazem o drone ao ponto de partida.
+[*]📖 [b]Loop infinito é seguro.[/b] O jogo coloca um atraso entre as repetições, então o
+  [b]while True[/b] não trava nada. Você para apertando Execute de novo.
+[/list]
+
+[h2]O erro mais comum: o [b]move[/b] dentro do [b]if[/b][/h2]
+
+[code]
+# ERRADO
+while True:
+    if can_harvest():
+        harvest()
+        plant(Entities.Bush)
+        move(North)      # só anda quando colheu
+[/code]
+
+Se a casa não está pronta, o [b]if[/b] falha, o drone [b]não anda[/b] e fica parado esperando. Pode
+até ser o que você quer em uma casa, mas num caminho com várias casas ele trava na primeira
+planta que demora. O [b]move[/b] fica [b]fora[/b] do [b]if[/b]: o drone anda sempre, colhendo só onde dá.
+
+[h2]Exercício[/h2]
+1. Faça o drone colher e replantar bush em uma coluna, sem parar.
+2. Troque o [b]plant[/b] por nada (só [b]harvest[/b]) e observe: a casa volta a ser grama sozinha.
+3. ⏳ Pergunta em aberto: com a fazenda de lado 3, o bush chega a crescer entre uma volta e a
+   seguinte? Anote quantas vezes o [b]can_harvest()[/b] deu falso e conte você mesmo.
+
+!!! warning "Colher cedo destrói"
+    ✅ Colher uma planta que ainda não está pronta a destrói. Por isso o [b]if can_harvest()[/b]
+    não é enfeite.
+
+Próximo: [url=02-for-e-a-grade.md][b]for[/b] e a grade[/url].

@@ -1,0 +1,82 @@
+[h1]03 · Solo e cenoura[/h1]
+
+[h2]O que o jogo liberou[/h2]
+[b]till()[/b] e [b]plant(Entities.Carrot)[/b].
+
+[h2]A ideia[/h2]
+Cenoura só cresce em [b]solo arado[/b]. Você ara a casa com [b]till()[/b]. Plantar custa itens: **1 Hay
+e 1 Wood** por cenoura, descontados no momento do [b]plant[/b].
+
+[list]
+[*]📖 Crescimento: entre 4,8 e 7,2 segundos.
+[*]✅ Casa vazia é grama; depois do [b]till()[/b], vira solo.
+[/list]
+
+[h2]A armadilha: [b]till()[/b] alterna[/h2]
+
+[code]
+till()   # grama -> solo
+till()   # solo  -> grama  (desfez!)
+[/code]
+
+Chamar [b]till()[/b] numa casa que já é solo a [b]devolve para grama[/b]. O [b]harvest()[/b] da cenoura deixa
+o solo arado, então a casa não precisa de [b]till()[/b] de novo. O erro clássico é arar a cada colheita:
+
+[code]
+# ERRADO: na volta 2 a casa já é solo, o till desfaz, o plant falha
+if can_harvest():
+    harvest()
+    till()
+    plant(Entities.Carrot)
+[/code]
+
+Sintoma: a casa fica alternando entre grama e cenoura.
+
+[h2]A solução: duas fases[/h2]
+
+[code]
+# Fase 1: ara e planta, uma vez por casa
+for i in range(get_world_size()):
+    for j in range(get_world_size()):
+        till()
+        plant(Entities.Carrot)
+        move(North)
+    move(East)
+
+# Fase 2: colhe e replanta, sem till
+while True:
+    for i in range(get_world_size()):
+        for j in range(get_world_size()):
+            if can_harvest():
+                harvest()
+                plant(Entities.Carrot)
+            move(North)
+        move(East)
+[/code]
+
+!!! warning "Rodar a fase 1 duas vezes estraga"
+    Como o [b]till()[/b] alterna, uma segunda execução devolve a grama as casas já aradas. ✅ O
+    [b]clear()[/b] remove tudo, leva o drone a (0,0) e devolve o solo a grama; use-o para recomeçar.
+
+[h2]"Por que a colheita fica irregular?"[/h2]
+
+Você roda a fase 2 e o drone colhe a 1ª casa, pula a 2ª e a 3ª, e na volta seguinte pega as
+que ficaram. Não é erro de código. ✅ Cada cenoura sorteia seu tempo entre 4,8 e 7,2 s, então
+algumas ainda não estão prontas quando o drone passa, e ele anda do mesmo jeito. O [b]move[/b]
+fora do [b]if[/b] faz exatamente isso.
+
+⏳ Dá para forçar o drone a esperar na casa com [b]while True[/b] e [b]break[/b], trocando o desencontro
+por tempo parado. Não medimos qual rende mais.
+
+[h2]Economia[/h2]
+Wood vem do bush; Hay vem da grama colhida. A cenoura gasta os dois. Transformar a fazenda
+inteira em cenoura derruba a produção do que ela consome, então um [b]misto[/b] (cenoura nas
+casas do meio, bush nos cantos, ou o inverso) mantém o Wood chegando. ⏳ Qual proporção rende
+mais não foi medido.
+
+[h2]Exercício[/h2]
+1. Reproduza o erro ([b]till()[/b] dentro do [b]if[/b]) e veja a casa alternar. Depois corrija.
+2. Faça uma coluna cenoura, bush, cenoura em lado 3. Dica: o padrão cabe num único [b]for i[/b].
+3. Meça: anote o Wood antes e depois de 1 minuto da fase 2. Quanto rendeu?
+
+Anterior: [url=02-for-e-a-grade.md][b]for[/b] e a grade[/url] · Próximo: [url=04-misturando-plantas.md]Misturando plantas[/url].

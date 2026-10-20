@@ -1,0 +1,58 @@
+[h1]01 · Harvest and repeat[/h1]
+
+[h2]What the game unlocked[/h2]
+[b]while[/b], [b]if[/b]/[b]else[/b], [b]can_harvest()[/b], [b]harvest()[/b], [b]move()[/b] with [b]North[/b]/[b]East[/b]/[b]South[/b]/[b]West[/b],
+[b]plant()[/b] with [b]Entities.Bush[/b].
+
+[h2]The idea[/h2]
+Your drone only runs what is in the script, and the script runs once and ends. For the farm to
+work by itself, the code goes inside a [b]while True:[/b], which repeats forever.
+
+Inside it, the question is always the same: [b]"is the plant on this tile ready?"[/b]
+
+[code]
+while True:
+    if can_harvest():
+        harvest()
+        plant(Entities.Bush)
+    move(North)
+[/code]
+
+Read it as: repeat forever; if the plant is ready, harvest and replant; [b]then[/b] move, whether
+you harvested or not.
+
+[h2]Three facts that matter[/h2]
+
+[list]
+[*]✅ [b]An empty tile is grass.[/b] [b]plant(Entities.Bush)[/b] works on it with no soil preparation.
+[*]✅ [b]The border wraps around.[/b] Moving [b]North[/b] on the last row takes you to the first. On a
+  side-3 farm, three steps north bring the drone back to where it started.
+[*]📖 [b]An infinite loop is safe.[/b] The game puts a delay between repetitions, so [b]while True[/b]
+  does not freeze anything. You stop it by pressing Execute again.
+[/list]
+
+[h2]The most common mistake: [b]move[/b] inside the [b]if[/b][/h2]
+
+[code]
+# WRONG
+while True:
+    if can_harvest():
+        harvest()
+        plant(Entities.Bush)
+        move(North)      # only moves when it harvested
+[/code]
+
+If the tile is not ready, the [b]if[/b] fails, the drone [b]does not move[/b] and waits. That may be what
+you want on a single tile, but on a path with several tiles it gets stuck on the first slow
+plant. [b]move[/b] goes [b]outside[/b] the [b]if[/b]: the drone always moves, harvesting only where it can.
+
+[h2]Exercise[/h2]
+1. Make the drone harvest and replant bush along one column, without stopping.
+2. Replace [b]plant[/b] with nothing (just [b]harvest[/b]) and watch: the tile turns back into grass by itself.
+3. ⏳ Open question: on a side-3 farm, does the bush finish growing between one lap and the next?
+   Count how many times [b]can_harvest()[/b] was false and check for yourself.
+
+!!! warning "Harvesting early destroys"
+    ✅ Harvesting a plant that is not ready destroys it. That is why [b]if can_harvest()[/b] is not decoration.
+
+Next: [url=02-for-e-a-grade.md][b]for[/b] and the grid[/url].
