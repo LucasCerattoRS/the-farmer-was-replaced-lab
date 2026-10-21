@@ -117,7 +117,7 @@ class ModelSet:
 
 # -- the grid ---------------------------------------------------------------------------------
 class Tile:
-    __slots__ = ("ground", "entity", "water", "planted_tick", "dead")
+    __slots__ = ("ground", "entity", "water", "planted_tick", "dead", "death_resolved")
 
     def __init__(self, ground):
         self.ground = ground
@@ -125,6 +125,7 @@ class Tile:
         self.water = 0.0            # 0..1
         self.planted_tick = None    # tick at which the current entity was planted
         self.dead = False           # a pumpkin that died on growing up
+        self.death_resolved = False
 
 
 class World:
