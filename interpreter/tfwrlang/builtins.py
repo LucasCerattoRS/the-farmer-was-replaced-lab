@@ -116,7 +116,7 @@ def make_world_builtins(world):
         if not (isinstance(entity, W.Symbol) and entity.group == "Entities"):
             raise TfwrRuntimeError("plant() needs an Entities.* value")
         t = world.tile()
-        if t.entity is not None:
+        if t.entity is not None and t.entity != W.ENTITIES["Dead_Pumpkin"]:
             charge(1)  # tile occupied — planting did not succeed
             return False
         t.entity = entity

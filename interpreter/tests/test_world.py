@@ -158,6 +158,22 @@ def test_surviving_pumpkin_stays_alive_until_harvest_and_replant_resets_fate():
     assert world.tile().entity == W.ENTITIES["Dead_Pumpkin"]
 
 
+def test_plant_replaces_dead_pumpkin_and_charges_success_price():
+    # crops.md: planting over a dead pumpkin clears it.
+    models = W.ModelSet(grow=lambda e, el: True, death=lambda: True)
+    interp, world = make(
+        "plant(Entities.Pumpkin)\n"
+        "can_harvest()\n"
+        "replanted = plant(Entities.Grass)\n",
+        world=W.World(size=3, models=models),
+    )
+    assert interp.global_env.get("replanted") is True
+    assert world.tile().entity == W.ENTITIES["Grass"]
+    assert world.tile().planted_tick == 201
+    assert world.tile().dead is False
+    assert world.ticks == 401
+
+
 # -- drones refused, on purpose (drones.md) --------------------------------------------------
 def test_spawn_drone_is_a_documented_refusal():
     with pytest.raises(Unspecified) as exc:
