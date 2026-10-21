@@ -162,8 +162,10 @@ class Interpreter:
 
     # -- public API --------------------------------------------------------------------------
     def run(self, module):
-        for stmt in module.body:
-            self.exec_stmt(stmt, self.global_env)
+        try:
+            self.exec_block(module.body, self.global_env)
+        except (_Break, _Continue, _Return) as signal:
+            raise TfwrRuntimeError("control flow outside a loop or function") from signal
 
     def run_source(self, src, filename="<tfwr>"):
         from .parser import parse
@@ -462,6 +464,8 @@ class Interpreter:
                 self.exec_block(node.body, frame)
             except _Return as r:
                 return r.value
+            except (_Break, _Continue) as signal:
+                raise TfwrRuntimeError("loop control cannot cross a function boundary") from signal
             return None
         finally:
             self.depth -= 1
