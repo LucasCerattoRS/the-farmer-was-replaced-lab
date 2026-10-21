@@ -122,15 +122,18 @@ def make_world_builtins(world):
         t.entity = entity
         t.planted_tick = world.ticks
         t.dead = False
+        t.death_resolved = False
         charge(200)
         return True
 
     def _is_grown(t):
         elapsed = world.ticks - (t.planted_tick or 0)
         grown = bool(world.models.grow(t.entity.name, elapsed))
-        if grown and t.entity.name == "Pumpkin" and not t.dead:
+        if grown and t.entity.name == "Pumpkin" and not t.death_resolved:
             # a pumpkin resolves life/death when it finishes growing (crops.md: ~1 in 5 dies)
-            if world.models.death():
+            dead = world.models.death()
+            t.death_resolved = True
+            if dead:
                 t.entity = W.ENTITIES["Dead_Pumpkin"]
                 t.dead = True
                 return False
