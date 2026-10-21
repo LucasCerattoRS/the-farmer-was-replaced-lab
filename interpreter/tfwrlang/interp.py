@@ -468,10 +468,15 @@ class Interpreter:
 
     def call_method(self, obj, method, args, node):
         table = self._method_tables.get(type(obj))
-        impl = table.get(method) if table else None
-        if impl is None:
+        entry = table.get(method) if table else None
+        if entry is None:
             raise NotSupported(
                 f"{type(obj).__name__}.{method}() is not a documented collection method"
+            )
+        impl, minimum, maximum = entry
+        if not minimum <= len(args) <= maximum:
+            raise TfwrRuntimeError(
+                f"{type(obj).__name__}.{method}() takes {minimum}..{maximum} args, got {len(args)}"
             )
         return impl(self, obj, args)
 
@@ -568,11 +573,11 @@ class Interpreter:
 
 Interpreter._method_tables = {
     list: {
-        "append": Interpreter._m_append,
-        "insert": Interpreter._m_insert,
-        "pop": Interpreter._m_pop,
-        "remove": Interpreter._m_remove,
+        "append": (Interpreter._m_append, 1, 1),
+        "insert": (Interpreter._m_insert, 2, 2),
+        "pop": (Interpreter._m_pop, 0, 1),
+        "remove": (Interpreter._m_remove, 1, 1),
     },
-    dict: {"pop": Interpreter._m_pop},
-    set: {"add": Interpreter._m_add, "remove": Interpreter._m_remove},
+    dict: {"pop": (Interpreter._m_pop, 1, 1)},
+    set: {"add": (Interpreter._m_add, 1, 1), "remove": (Interpreter._m_remove, 1, 1)},
 }

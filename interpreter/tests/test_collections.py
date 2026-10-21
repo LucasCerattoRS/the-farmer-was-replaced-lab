@@ -8,6 +8,7 @@ provides (`append`, `insert`, `pop`, `remove`, `add`). A method outside that set
 import pytest
 
 from tfwrlang.errors import NotSupported, TfwrRuntimeError
+from tfwrlang.interp import Interpreter
 from conftest import run
 
 
@@ -65,3 +66,27 @@ def test_tuple_unpacking_assignment():
     interp = run("a, b = (1, 2)\n")
     assert interp.global_env.get("a") == 1.0
     assert interp.global_env.get("b") == 2.0
+
+
+@pytest.mark.parametrize("source, call", [
+    ("[1]", "append()"),
+    ("[1]", "append(2, 3)"),
+    ("[1]", "insert(0)"),
+    ("[1]", "insert(0, 2, 3)"),
+    ("[1]", "pop(0, 1)"),
+    ("[1]", "remove()"),
+    ("[1]", "remove(1, 2)"),
+    ('{"a": 1}', "pop()"),
+    ('{"a": 1}', 'pop("a", 2)'),
+    ("{1}", "add()"),
+    ("{1}", "add(2, 3)"),
+    ("{1}", "remove()"),
+    ("{1}", "remove(1, 2)"),
+])
+def test_collection_methods_reject_wrong_arity_without_mutation(source, call):
+    interp = Interpreter()
+    interp.run_source(f"xs = {source}\n")
+    before = interp.global_env.get("xs").copy()
+    with pytest.raises(TfwrRuntimeError, match="args"):
+        interp.run_source(f"xs.{call}\n")
+    assert interp.global_env.get("xs") == before
