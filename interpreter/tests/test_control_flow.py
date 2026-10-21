@@ -79,3 +79,38 @@ def test_no_depth_limit_by_default_means_no_invented_number():
     finally:
         sys.setrecursionlimit(old)
     assert interp.global_env.get("d") == 0.0
+
+
+@pytest.mark.parametrize("statement", ["break", "continue"])
+@pytest.mark.parametrize("loop", ["for i in range(2):", "while True:"])
+def test_function_cannot_control_callers_loop(statement, loop):
+    with pytest.raises(TfwrRuntimeError, match="function boundary"):
+        run(
+            f"{loop}\n"
+            "    def invalid():\n"
+            f"        {statement}\n"
+            "    invalid()\n"
+            "    break\n",
+            max_loop_iterations=3,
+        )
+
+
+@pytest.mark.parametrize("statement", ["break", "continue", "return 1"])
+def test_top_level_control_flow_raises_public_runtime_error(statement):
+    with pytest.raises(TfwrRuntimeError, match="outside"):
+        run(statement + "\n")
+
+
+def test_function_can_control_its_own_loop_and_return_to_caller():
+    interp = run(
+        "def worker():\n"
+        "    for i in range(3):\n"
+        "        if i == 0:\n"
+        "            continue\n"
+        "        break\n"
+        "    return i\n"
+        "total = 0\n"
+        "for j in range(2):\n"
+        "    total += worker()\n"
+    )
+    assert interp.global_env.get("total") == 2.0
